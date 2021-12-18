@@ -13,6 +13,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 )
 
 func main () {
@@ -24,5 +25,21 @@ func main () {
 
 	flag.Parse()
 
+	/* temporary for testing */
+	fmt.Println("h: ", *helpPtr)
+	fmt.Println("v: ", *verbosePtr)
+	fmt.Println("t: ", *testPtr)
+	fmt.Println("c: ", *configPtr )
+	fmt.Println("l: ", *logPtr)
+
+	if *helpPtr {
+		fmt.Println("Ianus server help")
+		fmt.Println("\th - help")
+		fmt.Println("\tv - verbose")
+		fmt.Println("\tt - test configure file")
+		fmt.Println("\tc <file_location> - specify alternative configuration file")
+		fmt.Println("\tl <directory_location> - specify alternative log directory")
+		os.Exit(0)
+	}
 
 }
