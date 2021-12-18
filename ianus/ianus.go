@@ -8,6 +8,19 @@ package main
  *       -t (test config)
  *       -c (alt config file location)
  *       -l (alt log file location)
+ *
+ * TODO: Implement parsing configurations
+ *       Parse nodes and configurations
+ *
+ * TODO: Static generator implementation
+ *       Generate gemtext from markdown
+ *       Generate html from gemtext
+ *
+ * TODO: Implement LRU caching
+ *
+ * TODO: Server instances
+ *       Gemini Server over TLS
+ *       HTTP server
  */
 
 import (
