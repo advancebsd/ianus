@@ -24,6 +24,26 @@ func (l *Lexer) NextToken() {
 }
 
 /* Set the input of Lexer instance */
-func (l *Lexer) SetInput (in string) {
+func (l *Lexer) InitializeLexer (in string) {
 	l.input = in
+	l.position = 0
+	l.readPosition = 1
+	l.ch = l.input[l.position]
+}
+
+/* Advances the position in input */
+func (l *Lexer) readChar () {
+	if l.readPosition >= len(l.input) {
+		l.ch = 0
+	} else {
+		l.ch = l.input[l.readPosition]
+	}
+	l.position = l.readPosition
+	l.readPosition += 1
+}
+
+func (l *Lexer) skipWhiteSpace() {
+	if l.ch ==  ' ' || l.ch == '\t' || l.ch == '\r' {
+		l.readChar()
+	}
 }
