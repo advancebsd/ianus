@@ -20,7 +20,32 @@ func (l *Lexer) GetTokens() []Token {
 
 /* Read the the next token in input */
 func (l *Lexer) NextToken() {
-	// TODO: implement
+	var token Token
+
+	l.skipWhiteSpace()
+
+	// TODO: finish implementing state machine lexer
+	switch l.ch {
+	case '#':
+		switch l.lookAheadNextChar() {
+		case '#':
+			l.readChar()
+			switch l.lookAheadNextChar() {
+			case '#':
+				token.Type = HEADER_THREE
+				token.Literal = "###"
+
+			case ' ':
+				token.Type = HEADER_TWO
+				token.Literal = "##"
+			}
+		case ' ' :
+			token.Type = HEADER_ONE
+			token.Literal = string(l.ch)
+		}
+	}
+
+	l.readChar()
 }
 
 /* Set the input of Lexer instance */
@@ -46,4 +71,8 @@ func (l *Lexer) skipWhiteSpace() {
 	if l.ch ==  ' ' || l.ch == '\t' || l.ch == '\r' {
 		l.readChar()
 	}
+}
+
+func (l *Lexer) lookAheadNextChar() byte {
+	return l.input[l.readPosition]
 }
