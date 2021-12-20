@@ -48,5 +48,6 @@ const (
 	UNCHECKED = "[ ]"
 	CHECKED = "[x]"
 
+	CONTENT = "content"
 
 )
