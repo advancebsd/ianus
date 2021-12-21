@@ -50,4 +50,6 @@ const (
 
 	CONTENT = "content"
 
+	INVALID = "INVALID"
+	EOF = "EOF"
 )
