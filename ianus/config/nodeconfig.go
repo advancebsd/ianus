@@ -25,3 +25,9 @@ type Node struct {
 type Nodes struct {
 	nodes map[string]Node
 }
+
+func CreateNodeMap() *Nodes {
+	return new(Nodes)
+}
+
+
