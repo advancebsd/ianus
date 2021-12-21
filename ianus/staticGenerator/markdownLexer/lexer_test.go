@@ -40,3 +40,30 @@ func TestSkipWhiteSpace(t *testing.T) {
 		t.Errorf("White space not skipped")
 	}
 }
+
+/* Test for header tokens */
+func TestHeaderTokens(t *testing.T) {
+	headerOne := "# "
+	headerTwo := "## "
+	headerThree := "### "
+
+	var tok Token
+	l := new(Lexer)
+
+	l.InitializeLexer(headerOne)
+	tok = l.NextToken()
+	if tok.Type != HEADER_ONE {
+		t.Errorf("\nHeader token '#' not read properly")
+	}
+	l.InitializeLexer(headerTwo)
+	tok = l.NextToken()
+	if tok.Type != HEADER_TWO {
+		t.Errorf("\nHeader token '##' not properly read")
+	}
+	l.InitializeLexer(headerThree)
+	tok = l.NextToken()
+	if tok.Type != HEADER_THREE {
+		t.Errorf("\nHeader token '###' not properly read %s\n", tok.Type)
+	}
+
+}
