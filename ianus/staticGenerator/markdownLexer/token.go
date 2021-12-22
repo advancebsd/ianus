@@ -20,7 +20,7 @@ const (
 	/* Single character tokens */
 	LEFT_BRACKET = "["
 	RIGHT_BRACKET = "]"
-	LEFT_PARENT = "("
+	LEFT_PAREN = "("
 	RIGHT_PAREN = ")"
 	INLINE_CODE = "`"
 	CODE_BLOCK = "```"
