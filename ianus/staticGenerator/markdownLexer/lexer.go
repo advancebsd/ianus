@@ -73,11 +73,46 @@ func (l *Lexer) NextToken() Token {
 			token.Literal = string(c)
 		} else {
 			token.Type = INVALID
-			token.Literal = INVALID
+			token.Literal = string(c)
 		}
-
+	case '[':
+		token.Type = LEFT_BRACKET
+		token.Literal = string(l.ch)
+	case ']':
+		token.Type = RIGHT_BRACKET
+		token.Literal = string(l.ch)
+	case '(':
+		token.Type = LEFT_PAREN
+		token.Literal = string(l.ch)
+	case ')':
+		token.Type = RIGHT_PAREN
+		token.Literal = string(l.ch)
+	case '`':
+		var c []byte
+		for l.ch == '`' {
+			c = append(c, l.ch)
+			l.readChar()
+		}
+		if string(c) == "`" {
+			token.Type = INLINE_CODE
+			token.Literal = string(c)
+		} else if string(c) == "```" {
+			token.Type = CODE_BLOCK
+			token.Literal = string(c)
+		} else {
+			token.Type = INVALID
+			token.Literal = string(c)
+		}
+	case '!':
+		token.Type = EXCLAMATION
+		token.Literal = string(l.ch)
+	case '\n':
+		token.Type = NEW_LINE
+		token.Literal = string(l.ch)
+	case 0 :
+		token.Type = EOF
+		token.Literal = ""
 	}
-
 	l.readChar()
 
 	return token

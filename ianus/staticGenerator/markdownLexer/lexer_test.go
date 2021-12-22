@@ -67,3 +67,41 @@ func TestHeaderTokens(t *testing.T) {
 	}
 
 }
+
+/* Testing single character tokens */
+func TestSingleCharTokenLexer(t *testing.T) {
+	testString := "[]()!` ```"
+	l := new(Lexer)
+	l.InitializeLexer(testString)
+	var tok []Token
+	var token Token = l.NextToken()
+	for token.Type != EOF {
+		tok = append(tok, token)
+		token = l.NextToken()
+	}
+	if len(tok) != 7 {
+		t.Errorf("Did not read the proper amount of tokens")
+	}
+	if tok[0].Type != LEFT_BRACKET {
+		t.Errorf("Did not read left bracket token")
+	}
+	if tok[1].Type != RIGHT_BRACKET {
+		t.Errorf("Did not read right bracket token")
+	}
+	if tok[2].Type != LEFT_PAREN {
+		t.Errorf("Did not read left parenthesis token")
+	}
+	if tok[3].Type != RIGHT_PAREN {
+		t.Errorf("Did not read right parenthesis token")
+	}
+	if tok[4].Type != EXCLAMATION {
+		t.Errorf("Did not read exclamation token")
+	}
+	if tok[5].Type != INLINE_CODE {
+		t.Errorf("Did not read in line code token")
+	}
+	if tok[6].Type != CODE_BLOCK {
+		t.Errorf("Did not read code block token")
+	}
+
+}
