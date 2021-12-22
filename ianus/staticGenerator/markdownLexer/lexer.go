@@ -109,9 +109,12 @@ func (l *Lexer) NextToken() Token {
 	case '\n':
 		token.Type = NEW_LINE
 		token.Literal = string(l.ch)
-	case 0 :
+	case 0:
 		token.Type = EOF
 		token.Literal = ""
+	default:
+		token.Type = INVALID
+		token.Literal = string(l.ch)
 	}
 	l.readChar()
 
