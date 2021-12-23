@@ -12,8 +12,8 @@ const (
 	/* Escape sequences */
 	// TODO: Not complete
 	ESCAPE_EXCLAMATION = "\\!"
-	ESCAPE_QUOTE = "\\"
-	ESCAPE_POUND = "\\"
+	ESCAPE_QUOTE = "\""
+	ESCAPE_POUND = "\\#"
 	ESCAPE_DOLLAR = "\\$"
 	ESCAPE_PERCENT  = "\\%"
 

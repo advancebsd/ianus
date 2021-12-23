@@ -65,7 +65,33 @@ func TestHeaderTokens(t *testing.T) {
 	if tok.Type != HEADER_THREE {
 		t.Errorf("\nHeader token '###' not properly read %s\n", tok.Type)
 	}
+}
 
+/* Test for emphasis toksn */
+/* Test for header tokens */
+func TestEmphasisTokens(t *testing.T) {
+	headerOne := "* "
+	headerTwo := "** "
+	headerThree := "*** "
+
+	var tok Token
+	l := new(Lexer)
+
+	l.InitializeLexer(headerOne)
+	tok = l.NextToken()
+	if tok.Type != ITALIC {
+		t.Errorf("\nHeader token '#' not read properly")
+	}
+	l.InitializeLexer(headerTwo)
+	tok = l.NextToken()
+	if tok.Type != BOLD {
+		t.Errorf("\nHeader token '##' not properly read")
+	}
+	l.InitializeLexer(headerThree)
+	tok = l.NextToken()
+	if tok.Type != BOLD_ITALIC {
+		t.Errorf("\nHeader token '###' not properly read %s\n", tok.Type)
+	}
 }
 
 /* Testing single character tokens */
