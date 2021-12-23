@@ -68,6 +68,9 @@ func (l *Lexer) lexEscapeToken(id byte) Token{
 	case '%':
 		t.Type = ESCAPE_PERCENT
 		t.Literal = string(l.ch)
+	case '"':
+		t.Type = ESCAPE_QUOTE
+		t.Literal = string(l.ch)
 	default:
 		t.Type = INVALID
 		t.Literal = string(l.ch)

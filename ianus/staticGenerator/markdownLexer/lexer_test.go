@@ -67,8 +67,7 @@ func TestHeaderTokens(t *testing.T) {
 	}
 }
 
-/* Test for emphasis toksn */
-/* Test for header tokens */
+/* Test for emphasis tokens */
 func TestEmphasisTokens(t *testing.T) {
 	headerOne := "* "
 	headerTwo := "** "
@@ -130,4 +129,17 @@ func TestSingleCharTokenLexer(t *testing.T) {
 		t.Errorf("Did not read code block token")
 	}
 
+}
+
+func TestEscapeTokens(t *testing.T) {
+	str := "\\n \\\" \\! \\$ \\#"
+	l := new(Lexer)
+	l.InitializeLexer(str)
+	var tokens []Token
+	token := l.NextToken()
+	for token.Type != EOF {
+		tokens = append(tokens, token)
+		token = l.NextToken()
+	}
+	
 }
