@@ -185,9 +185,9 @@ func (l *Lexer) NextToken() Token {
 	case '+':
 		token.Type = BULLET_PLUS
 		token.Literal = string(l.ch)
-	case '\\':
-		l.readChar()
-		token = l.lexEscapeToken(l.ch)
+	case '\n':
+		token.Type = NEW_LINE
+		token.Literal = string(l.ch)
 	case 0:
 		token.Type = EOF
 		token.Literal = ""

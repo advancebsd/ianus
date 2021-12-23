@@ -131,8 +131,9 @@ func TestSingleCharTokenLexer(t *testing.T) {
 
 }
 
+/* Test for lexing escape tokens */
 func TestEscapeTokens(t *testing.T) {
-	str := "\\n \\\" \\! \\$ \\#"
+	str := "\n"
 	l := new(Lexer)
 	l.InitializeLexer(str)
 	var tokens []Token
@@ -141,5 +142,7 @@ func TestEscapeTokens(t *testing.T) {
 		tokens = append(tokens, token)
 		token = l.NextToken()
 	}
-	
+	if tokens[0].Type != NEW_LINE {
+		t.Errorf("\nDid not properly read new line token")
+	}
 }
