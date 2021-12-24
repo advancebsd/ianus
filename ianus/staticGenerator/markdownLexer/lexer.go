@@ -1,5 +1,5 @@
 package markdownLexer
-
+import "fmt"
 /**
   * TODO: Implement lexer
   * TODO: Write test cases
@@ -81,12 +81,12 @@ func (l *Lexer) lexEscapeToken(id byte) Token{
 
 /* Used to get repeacted characters that may be a token */
 func (l *Lexer) getRepeatCharToken(ch byte) string {
-	var c []byte
+	pos := l.position
 	for l.ch == ch {
-		c = append(c, l.ch)
 		l.readChar()
 	}
-	return string(c)
+	fmt.Printf(l.input[pos:l.position])
+	return l.input[pos:l.position]
 }
 
 /* Lex the type of emphasis toke */
@@ -136,7 +136,7 @@ func (l *Lexer) lexHeaderToken() Token {
 }
 
 func isLetter(ch byte) bool {
-	return ch >= 'A' && ch >= 'Z' || ch >= 'a' && ch <= 'z'
+	return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
 }
 
 func isDigit(ch byte) bool {
@@ -144,11 +144,11 @@ func isDigit(ch byte) bool {
 }
 
 func isPunctuation(ch byte) bool {
-	return ch == '.' || ch == ',' || ch == '/'
+	return ch == '.' || ch == ',' || ch == '_'
 }
 
 func isContentWhiteSpace(ch byte) bool {
-	return ch == ' ' || ch == '\t'
+	return ch == ' '
 }
 
 func (l *Lexer) readContent() string {
@@ -200,8 +200,10 @@ func (l *Lexer) NextToken() Token {
 
 	case '#':
 		token = l.lexHeaderToken()
+		return token
 	case '*':
 		token = l.lexEmphasisToken()
+		return token
 	case '[':
 		token.Type = LEFT_BRACKET
 		token.Literal = string(l.ch)
@@ -230,6 +232,7 @@ func (l *Lexer) NextToken() Token {
 			token.Type = INVALID
 			token.Literal = string(c)
 		}
+		return token
 	case '!':
 		token.Type = EXCLAMATION
 		token.Literal = string(l.ch)

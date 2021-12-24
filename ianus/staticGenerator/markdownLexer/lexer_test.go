@@ -2,7 +2,6 @@ package markdownLexer
 
 import (
 	"testing"
-	"fmt"
 )
 
 func TestInitializerLexer(t *testing.T) {
@@ -70,9 +69,9 @@ func TestHeaderTokens(t *testing.T) {
 
 /* Test for emphasis tokens */
 func TestEmphasisTokens(t *testing.T) {
-	headerOne := "* "
-	headerTwo := "** "
-	headerThree := "*** "
+	headerOne := "*"
+	headerTwo := "**"
+	headerThree := "***"
 
 	var tok Token
 	l := new(Lexer)
@@ -165,5 +164,22 @@ func TestReadContent(t *testing.T) {
 	}
 	if tokens[1].Literal  != "one" {
 		t.Errorf("Did not get the proper literal of content 'one'")
+	}
+
+	str_one := "### Hello World ***BSD***"
+	var lex Lexer
+	lex.InitializeLexer(str_one)
+	var tok Token
+	tok = lex.NextToken()
+	if tok.Type != HEADER_THREE {
+		t.Errorf("Did not properly read in token for header in the beginning")
+	}
+	tok = lex.NextToken()
+	if tok.Type != CONTENT {
+		t.Errorf("Did not properly read the content 'Hello World'")
+	}
+	tok = lex.NextToken()
+	if tok.Type != BOLD_ITALIC {
+		t.Errorf("Did not read the bold italic token at between new line token and 'BSD',  recv:  |%d|", lex.position)
 	}
 }
