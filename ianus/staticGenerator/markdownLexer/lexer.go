@@ -135,6 +135,60 @@ func (l *Lexer) lexHeaderToken() Token {
 	return t
 }
 
+func isLetter(ch byte) bool {
+	return ch >= 'A' && ch >= 'Z' || ch >= 'a' && ch <= 'z'
+}
+
+func isDigit(ch byte) bool {
+	return ch >= '0' && ch <= '9'
+}
+
+func isPunctuation(ch byte) bool {
+	return ch == '.' || ch == ',' || ch == '/'
+}
+
+func isContentWhiteSpace(ch byte) bool {
+	return ch == ' ' || ch == '\t'
+}
+
+func (l *Lexer) readContent() string {
+	pos := l.position
+	for isLetter(l.ch) || isDigit(l.ch) || isPunctuation(l.ch) || isContentWhiteSpace(l.ch) {
+		l.readChar()
+	}
+	return l.input[pos:l.position]
+}
+
+func isToken(ch byte) bool {
+	switch ch {
+	case '#':
+		return true
+	case '*':
+		return true
+	case '[':
+		return true
+	case ']':
+		return true
+	case '(':
+		return true
+	case ')':
+		return true
+	case '`':
+		return true
+	case '!':
+		return true
+	case '-':
+		return true
+	case '+':
+		return true
+	case '\n':
+		return true
+	default:
+		return false
+	}
+	return false
+}
+
 /* Read the the next token in input */
 func (l *Lexer) NextToken() Token {
 	var token Token
@@ -192,8 +246,9 @@ func (l *Lexer) NextToken() Token {
 		token.Type = EOF
 		token.Literal = ""
 	default:
-		token.Type = INVALID
-		token.Literal = string(l.ch)
+		content := l.readContent()
+		token.Type = CONTENT
+		token.Literal = content
 	}
 	l.readChar()
 

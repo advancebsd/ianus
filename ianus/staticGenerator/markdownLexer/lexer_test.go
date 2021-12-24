@@ -2,6 +2,7 @@ package markdownLexer
 
 import (
 	"testing"
+	"fmt"
 )
 
 func TestInitializerLexer(t *testing.T) {
@@ -144,5 +145,25 @@ func TestEscapeTokens(t *testing.T) {
 	}
 	if tokens[0].Type != NEW_LINE {
 		t.Errorf("\nDid not properly read new line token")
+	}
+}
+
+/* Test for reading in content */
+func TestReadContent(t *testing.T) {
+	str := "hello . world \n one# two * three"
+	l := new(Lexer)
+	l.InitializeLexer(str)
+	var tokens []Token
+	var token Token
+	token = l.NextToken()
+	for token.Type != EOF {
+		tokens = append(tokens, token)
+		token = l.NextToken()
+	}
+	if tokens[0].Type != CONTENT {
+		t.Errorf("Could not parse 'hello . world ' as content")
+	}
+	if tokens[1].Literal  != "one" {
+		t.Errorf("Did not get the proper literal of content 'one'")
 	}
 }
