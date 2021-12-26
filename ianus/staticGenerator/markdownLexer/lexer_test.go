@@ -1,6 +1,7 @@
 package markdownLexer
 
 import (
+	"os"
 	"testing"
 )
 
@@ -262,5 +263,28 @@ func TestMarkdownLinks (t *testing.T) {
 	if token.Type != RIGHT_PAREN {
 		t.Errorf("Did not properly parse the right parenthesis as a token")
 	}
+}
 
+/* test against a local source located in the sample folder of this directory */
+func TestAgainstRemoteSource (t *testing.T) {
+	file := "sample/SampleMD.md"
+	content, err := os.ReadFile(file)
+	if err != nil {
+		t.Errorf("Could not run test due to unable to locate sample file")
+	}
+	l := new(Lexer)
+	l.InitializeLexer(string(content))
+	var token Token
+	var tokens []Token
+
+	token = l.NextToken()
+	for token.Type != EOF {
+		tokens = append(tokens, token)
+		token = l.NextToken()
+	}
+	for i, curr := range tokens {
+		if curr.Type == INVALID {
+			t.Errorf("Found an invalid token! [%d] %s : %s", i, curr.Type, curr.Literal)
+		}
+	}
 }
