@@ -185,7 +185,7 @@ func TestReadContent(t *testing.T) {
 	}
 }
 
-func TestBulletPoints (t *testing.T) {
+func TestBulletPoints(t *testing.T) {
 	str := "+ Hello world"
 	l := new(Lexer)
 	l.InitializeLexer(str)
@@ -214,7 +214,7 @@ func TestBulletPoints (t *testing.T) {
 }
 
 /* Testing the parsing of bracket tokens for LEFT_BRACKET, UNCHECKED, and CHECKED tokens */
-func TestBracketTokens (t *testing.T) {
+func TestBracketTokens(t *testing.T) {
 	str := "[ ] [x] ["
 	l := new(Lexer)
 	l.InitializeLexer(str)
@@ -234,7 +234,7 @@ func TestBracketTokens (t *testing.T) {
 }
 
 /* Testing the tokens generated from a link markdown style input */
-func TestMarkdownLinks (t *testing.T) {
+func TestMarkdownLinks(t *testing.T) {
 	str := "[netbsd](http://netbsd.com)"
 	l := new(Lexer)
 	l.InitializeLexer(str)
@@ -266,7 +266,7 @@ func TestMarkdownLinks (t *testing.T) {
 }
 
 /* test against a local source located in the sample folder of this directory */
-func TestAgainstRemoteSource (t *testing.T) {
+func TestAgainstRemoteSource(t *testing.T) {
 	file := "sample/SampleMD.md"
 	content, err := os.ReadFile(file)
 	if err != nil {

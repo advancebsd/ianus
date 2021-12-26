@@ -1,10 +1,9 @@
 package markdownLexer
 
-
 type TokenType string
 
 type Token struct {
-	Type TokenType
+	Type    TokenType
 	Literal string
 }
 
@@ -12,44 +11,44 @@ const (
 	/* Escape sequences */
 	// TODO: Not complete
 	ESCAPE_EXCLAMATION = "\\!"
-	ESCAPE_QUOTE = "\""
-	ESCAPE_POUND = "\\#"
-	ESCAPE_DOLLAR = "\\$"
-	ESCAPE_PERCENT  = "\\%"
+	ESCAPE_QUOTE       = "\""
+	ESCAPE_POUND       = "\\#"
+	ESCAPE_DOLLAR      = "\\$"
+	ESCAPE_PERCENT     = "\\%"
 
 	/* Single character tokens */
-	LEFT_BRACKET = "["
+	LEFT_BRACKET  = "["
 	RIGHT_BRACKET = "]"
-	LEFT_PAREN = "("
-	RIGHT_PAREN = ")"
-	INLINE_CODE = "`"
-	CODE_BLOCK = "```"
-	EXCLAMATION = "!"
-	NEW_LINE = "\n"
+	LEFT_PAREN    = "("
+	RIGHT_PAREN   = ")"
+	INLINE_CODE   = "`"
+	CODE_BLOCK    = "```"
+	EXCLAMATION   = "!"
+	NEW_LINE      = "\n"
 
 	/* Emphasis Tokens */
-	ITALIC = "*"
-	BOLD = "**"
+	ITALIC      = "*"
+	BOLD        = "**"
 	BOLD_ITALIC = "***"
-	QUOTE = ">"
+	QUOTE       = ">"
 
 	/* Header tokens */
-	HEADER_ONE = "#"
-	HEADER_TWO = "##"
+	HEADER_ONE   = "#"
+	HEADER_TWO   = "##"
 	HEADER_THREE = "###"
 
 	/* List Tokens */
 	// No support for asteric as bullet
 	// Only support for unordered bullets currently
 	BULLET_MINUS = "-"
-	BULLET_PLUS = "+"
+	BULLET_PLUS  = "+"
 
 	/* Check box tokens */
 	UNCHECKED = "[ ]"
-	CHECKED = "[x]"
+	CHECKED   = "[x]"
 
 	CONTENT = "content"
 
 	INVALID = "INVALID"
-	EOF = "EOF"
+	EOF     = "EOF"
 )

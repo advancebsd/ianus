@@ -1,25 +1,25 @@
 package config
 
 type network_info struct {
-	ip string
+	ip   string
 	port int16
 }
 
 type gemini struct {
-	root string
+	root     string
 	net_info []network_info
 }
 
 type http struct {
-	root string
+	root     string
 	net_info []network_info
 }
 
 type Node struct {
 	hostname string
-	alias []string
-	gemini gemini
-	http http
+	alias    []string
+	gemini   gemini
+	http     http
 }
 
 type Nodes struct {
@@ -29,5 +29,3 @@ type Nodes struct {
 func CreateNodeMap() *Nodes {
 	return new(Nodes)
 }
-
-

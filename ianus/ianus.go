@@ -1,4 +1,3 @@
-
 package main
 
 /*
@@ -29,7 +28,7 @@ import (
 	"os"
 )
 
-func main () {
+func main() {
 	helpPtr := flag.Bool("h", false, "help")
 	verbosePtr := flag.Bool("v", false, "verbose")
 	testPtr := flag.Bool("t", false, "test config")
@@ -42,7 +41,7 @@ func main () {
 	fmt.Println("h: ", *helpPtr)
 	fmt.Println("v: ", *verbosePtr)
 	fmt.Println("t: ", *testPtr)
-	fmt.Println("c: ", *configPtr )
+	fmt.Println("c: ", *configPtr)
 	fmt.Println("l: ", *logPtr)
 
 	if *helpPtr {
