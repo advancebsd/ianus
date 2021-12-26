@@ -183,3 +183,31 @@ func TestReadContent(t *testing.T) {
 		t.Errorf("Did not read the bold italic token at between new line token and 'BSD',  recv:  |%d|", lex.position)
 	}
 }
+
+func TestBulletPoints (t *testing.T) {
+	str := "+ Hello world"
+	l := new(Lexer)
+	l.InitializeLexer(str)
+	var token Token
+	token = l.NextToken()
+	if token.Type != BULLET_PLUS {
+		t.Errorf("Did not properly parse plus signed used as a bullet")
+	}
+	token = l.NextToken()
+	if token.Type != CONTENT {
+		t.Errorf("Content not properly parsed after bullt point plus")
+	}
+
+	str1 := "- Hello World"
+	l1 := new(Lexer)
+	l1.InitializeLexer(str1)
+	var token1 Token
+	token1 = l1.NextToken()
+	if token1.Type != BULLET_MINUS {
+		t.Errorf("Did not properly parse the minus bullet point")
+	}
+	token1 = l1.NextToken()
+	if token1.Type != CONTENT {
+		t.Errorf("Did not properly parse content after minus bullet point")
+	}
+}
