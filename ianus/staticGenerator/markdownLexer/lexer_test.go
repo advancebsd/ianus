@@ -224,10 +224,43 @@ func TestBracketTokens (t *testing.T) {
 	}
 	token = l.NextToken()
 	if token.Type != CHECKED {
-		t.Errorf("Failed to parse the checked markdown token properly, |%s|", token.Literal)
+		t.Errorf("Failed to parse the checked markdown token properly")
 	}
 	token = l.NextToken()
 	if token.Type != LEFT_BRACKET {
-		t.Errorf("Failed to parse the left bracket token properly, |%s|", token.Literal)
+		t.Errorf("Failed to parse the left bracket token properly")
 	}
+}
+
+/* Testing the tokens generated from a link markdown style input */
+func TestMarkdownLinks (t *testing.T) {
+	str := "[netbsd](http://netbsd.com)"
+	l := new(Lexer)
+	l.InitializeLexer(str)
+	var token Token
+	token = l.NextToken()
+	if token.Type != LEFT_BRACKET {
+		t.Errorf("Did not properly parse left bracket token")
+	}
+	token = l.NextToken()
+	if token.Type != CONTENT {
+		t.Errorf("Did not properly parse link description as content")
+	}
+	token = l.NextToken()
+	if token.Type != RIGHT_BRACKET {
+		t.Errorf("Did not properly parse the right bracket token")
+	}
+	token = l.NextToken()
+	if token.Type != LEFT_PAREN {
+		t.Errorf("Did not properly parse the left parenthesis token")
+	}
+	token = l.NextToken()
+	if token.Type != CONTENT {
+		t.Errorf("Did not properly parse the link as a content token")
+	}
+	token = l.NextToken()
+	if token.Type != RIGHT_PAREN {
+		t.Errorf("Did not properly parse the right parenthesis as a token")
+	}
+
 }

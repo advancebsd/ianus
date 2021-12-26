@@ -144,7 +144,7 @@ func isDigit(ch byte) bool {
 }
 
 func isPunctuation(ch byte) bool {
-	return ch == '.' || ch == ',' || ch == '_'
+	return ch == '.' || ch == ',' || ch == '_' || ch == ':' || ch == '/'
 }
 
 func isContentWhiteSpace(ch byte) bool {
