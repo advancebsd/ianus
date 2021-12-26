@@ -43,9 +43,9 @@ func TestSkipWhiteSpace(t *testing.T) {
 
 /* Test for header tokens */
 func TestHeaderTokens(t *testing.T) {
-	headerOne := "# "
-	headerTwo := "## "
-	headerThree := "### "
+	headerOne := "#"
+	headerTwo := "##"
+	headerThree := "###"
 
 	var tok Token
 	l := new(Lexer)
@@ -162,8 +162,8 @@ func TestReadContent(t *testing.T) {
 	if tokens[0].Type != CONTENT {
 		t.Errorf("Could not parse 'hello . world ' as content")
 	}
-	if tokens[1].Literal  != "one" {
-		t.Errorf("Did not get the proper literal of content 'one'")
+	if tokens[1].Type != NEW_LINE {
+		t.Errorf("Could not parse the new line as a token")
 	}
 
 	str_one := "### Hello World ***BSD***"

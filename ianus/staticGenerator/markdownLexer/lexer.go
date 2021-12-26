@@ -1,16 +1,16 @@
 package markdownLexer
-import "fmt"
+
 /**
-  * TODO: Implement lexer
-  * TODO: Write test cases
+ * TODO: Implement lexer
+ * TODO: Write test cases
  */
 
 type Lexer struct {
-	input string
-	position int // current position in input
+	input        string
+	position     int // current position in input
 	readPosition int // next position in input
-	ch byte
-	tokens []Token
+	ch           byte
+	tokens       []Token
 }
 
 /* Return the token stream in this instance of the lexer */
@@ -19,7 +19,7 @@ func (l *Lexer) GetTokens() []Token {
 }
 
 /* Set the input of Lexer instance */
-func (l *Lexer) InitializeLexer (in string) {
+func (l *Lexer) InitializeLexer(in string) {
 	l.input = in
 	l.position = 0
 	l.readPosition = 1
@@ -27,7 +27,7 @@ func (l *Lexer) InitializeLexer (in string) {
 }
 
 /* Advances the position in input */
-func (l *Lexer) readChar () {
+func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
 	} else {
@@ -38,7 +38,7 @@ func (l *Lexer) readChar () {
 }
 
 func (l *Lexer) skipWhiteSpace() {
-	if l.ch ==  ' ' || l.ch == '\t' || l.ch == '\r' {
+	if l.ch == ' ' || l.ch == '\t' || l.ch == '\r' {
 		l.readChar()
 	}
 }
@@ -52,7 +52,7 @@ func (l *Lexer) lookAheadNextChar() byte {
 }
 
 /* Lex the character being excaped from in token */
-func (l *Lexer) lexEscapeToken(id byte) Token{
+func (l *Lexer) lexEscapeToken(id byte) Token {
 	var t Token
 
 	switch id {
@@ -85,7 +85,7 @@ func (l *Lexer) getRepeatCharToken(ch byte) string {
 	for l.ch == ch {
 		l.readChar()
 	}
-	fmt.Printf(l.input[pos:l.position])
+
 	return l.input[pos:l.position]
 }
 
@@ -104,7 +104,7 @@ func (l *Lexer) lexEmphasisToken() Token {
 	} else if str == "***" {
 		t.Type = BOLD_ITALIC
 		t.Literal = str
-	} else  {
+	} else {
 		t.Type = INVALID
 		t.Literal = str
 	}
@@ -252,6 +252,7 @@ func (l *Lexer) NextToken() Token {
 		content := l.readContent()
 		token.Type = CONTENT
 		token.Literal = content
+		return token
 	}
 	l.readChar()
 
