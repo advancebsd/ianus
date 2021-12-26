@@ -211,3 +211,23 @@ func TestBulletPoints (t *testing.T) {
 		t.Errorf("Did not properly parse content after minus bullet point")
 	}
 }
+
+/* Testing the parsing of bracket tokens for LEFT_BRACKET, UNCHECKED, and CHECKED tokens */
+func TestBracketTokens (t *testing.T) {
+	str := "[ ] [x] ["
+	l := new(Lexer)
+	l.InitializeLexer(str)
+	var token Token
+	token = l.NextToken()
+	if token.Type != UNCHECKED {
+		t.Errorf("Failed to parse the unchecked markdown token properly")
+	}
+	token = l.NextToken()
+	if token.Type != CHECKED {
+		t.Errorf("Failed to parse the checked markdown token properly, |%s|", token.Literal)
+	}
+	token = l.NextToken()
+	if token.Type != LEFT_BRACKET {
+		t.Errorf("Failed to parse the left bracket token properly, |%s|", token.Literal)
+	}
+}

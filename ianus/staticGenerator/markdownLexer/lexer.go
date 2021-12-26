@@ -189,6 +189,47 @@ func isToken(ch byte) bool {
 	return false
 }
 
+func (l *Lexer) lexBracketToken() Token {
+	var token Token
+	pos := l.position
+	switch l.ch {
+	case '[':
+		l.readChar()
+		switch l.ch {
+		case ' ':
+			l.readChar()
+			switch l.ch {
+			case ']':
+				l.readChar()
+				token.Type = UNCHECKED
+				token.Literal = l.input[pos:l.position]
+			default:
+				token.Type = LEFT_BRACKET
+				token.Literal = "["
+			}
+		case 'x':
+			l.readChar()
+			switch l.ch {
+			case ']':
+				l.readChar()
+				token.Type = CHECKED
+				token.Literal = l.input[pos:l.position]
+			default:
+				token.Type = INVALID
+				token.Literal = l.input[pos:l.position]
+			}
+		default:
+			token.Type = LEFT_BRACKET
+			token.Literal = "["
+		}
+	default:
+		token.Type = INVALID
+		token.Literal = string(l.ch)
+	}
+
+	return token
+}
+
 /* Read the the next token in input */
 func (l *Lexer) NextToken() Token {
 	var token Token
@@ -205,8 +246,10 @@ func (l *Lexer) NextToken() Token {
 		token = l.lexEmphasisToken()
 		return token
 	case '[':
-		token.Type = LEFT_BRACKET
-		token.Literal = string(l.ch)
+		token = l.lexBracketToken()
+		return token
+		// token.Type = LEFT_BRACKET
+		// token.Literal = string(l.ch)
 	case ']':
 		token.Type = RIGHT_BRACKET
 		token.Literal = string(l.ch)
