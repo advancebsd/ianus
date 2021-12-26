@@ -189,6 +189,7 @@ func isToken(ch byte) bool {
 	return false
 }
 
+/* Checks for LEFT_BRACKET, CHECKED, and UNCHECKED tokens */
 func (l *Lexer) lexBracketToken() Token {
 	var token Token
 	pos := l.position
