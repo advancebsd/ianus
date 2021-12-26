@@ -135,14 +135,17 @@ func (l *Lexer) lexHeaderToken() Token {
 	return t
 }
 
+/* check if the character is a letter between A and Z, upper and lower case */
 func isLetter(ch byte) bool {
 	return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
 }
 
+/* check if the digit is a ascii number between 0 and 9 */
 func isDigit(ch byte) bool {
 	return ch >= '0' && ch <= '9'
 }
 
+/* check for allowed punctuation in content block */
 func isPunctuation(ch byte) bool {
 	return ch == '.' || ch == ',' || ch == '_' || ch == ':' || ch == '/'
 }
