@@ -12,11 +12,11 @@ import (
 func renderMdTokenToGemtext(t markdownLexer.Token) string {
 	var str string
 	switch t.Type {
-	case "HEADER_ONE":
+	case markdownLexer.HEADER_ONE:
 		str = "# "
-	case "HEADER_TWO":
+	case markdownLexer.HEADER_TWO:
 		str =  "## "
-	case "Header_THREE":
+	case markdownLexer.HEADER_THREE:
 		str = "### "
 	}
 
