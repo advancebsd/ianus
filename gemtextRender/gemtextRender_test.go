@@ -3,7 +3,6 @@ package gemtextRender
 import (
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 	"testing"
-	"fmt"
 )
 
 func TestRenderHeaderTokens(t *testing.T) {
