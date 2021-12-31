@@ -257,8 +257,6 @@ func (l *Lexer) lexBracketToken() Token {
 func (l *Lexer) NextToken() Token {
 	var token Token
 
-	//l.skipWhiteSpace()
-
 	// TODO: finish implementing state machine lexer
 	switch l.ch {
 
@@ -271,8 +269,6 @@ func (l *Lexer) NextToken() Token {
 	case '[':
 		token = l.lexBracketToken()
 		return token
-		// token.Type = LEFT_BRACKET
-		// token.Literal = string(l.ch)
 	case ']':
 		token.Type = RIGHT_BRACKET
 		token.Literal = string(l.ch)
@@ -323,6 +319,7 @@ func (l *Lexer) NextToken() Token {
 		token.Literal = content
 		return token
 	}
+
 	l.readChar()
 
 	return token
