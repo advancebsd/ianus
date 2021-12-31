@@ -3,7 +3,6 @@ package gemtextRender
 import (
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 	"testing"
-	"fmt"
 )
 
 func TestRenderHeaderTokens(t *testing.T) {
@@ -95,7 +94,6 @@ func TestRenderOnString(t *testing.T) {
 	expected := "# HeaderOne\nSomeInformation about test\n HelloWorld"
 	if result != expected {
 		t.Errorf("Did no properly render to gemtext the test string")
-		fmt.Println(result)
 	}
 }
 
@@ -125,7 +123,7 @@ func TestLinkGeneration(t *testing.T) {
 
 // need to troubleshoot test case
 func TestLeftBracketRender(t *testing.T) {
-	str := "[ netbsd.org(one)"
+	str := "[netbsd.org(one)"
 	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
 	var tokens []markdownLexer.Token
@@ -136,17 +134,14 @@ func TestLeftBracketRender(t *testing.T) {
 		tok = l.NextToken()
 	}
 
-	fmt.Println(tokens)
-
 	var g GemtextRender
 	g.InitializeGemtextRender(tokens)
 	result, err := g.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue with rendering tokens")
 	}
-	expected := "[ netbsd.org(one)"
+	expected := "[netbsd.org(one)"
 	if result != expected {
 		t.Errorf("Issue with rendering bracket token followed by content")
-		fmt.Println(result)
 	}
 }
