@@ -62,31 +62,67 @@ func (g *GemtextRender) peekNextToken() (markdownLexer.Token, error) {
 	return g.tokenStream[g.idx+1], nil
 }
 
-func (g *GemtextRender) checkForLinkTokens() string {
-	var str string
-	temp_idx := g.idx
+func (g *GemtextRender) resetTokenRenderForLinks(old_idx int) string {
+	g.idx = old_idx
+	return g.tokenStream[g.idx].Literal
+}
 
+// WIP: State machine for rendering link from markdown tokens to gemtext
+func (g *GemtextRender) renderLeftBracket() string {
+	old_idx := g.idx
+
+	var str string
 	var link string
 	var desc string
+	var token markdownLexer.Token
 
-	pattern := []string{markdownLexer.LEFT_BRACKET, markdownLexer.CONTENT, markdownLexer.RIGHT_BRACKET, markdownLexer.LEFT_PAREN, markdownLexer.CONTENT, markdownLexer.RIGHT_PAREN}
-
-	for i := 0; i < len(pattern); i++ {
-		if pattern[i] != string(g.tokenStream[temp_idx].Type) {
-			return ""
+	token, _ = g.readToken()
+	g.incrementIndex()
+	switch token.Type {
+	case markdownLexer.LEFT_BRACKET :
+		token, _ = g.readToken()
+		g.incrementIndex()
+		switch token.Type {
+		case markdownLexer.CONTENT:
+			link = token.Literal
+			token, _ = g.readToken()
+			g.incrementIndex()
+			switch token.Type {
+			case markdownLexer.RIGHT_BRACKET:
+				token, _ = g.readToken()
+				g.incrementIndex()
+				switch token.Type {
+				case markdownLexer.LEFT_PAREN:
+					token, _ = g.readToken()
+					g.incrementIndex()
+					switch token.Type {
+					case markdownLexer.CONTENT:
+						desc = token.Literal
+						token, _ = g.readToken()
+						g.incrementIndex()
+						switch token.Type {
+						case markdownLexer.RIGHT_PAREN:
+							str = "=> " + link + " " + desc
+						default:
+							str = g.resetTokenRenderForLinks(old_idx)
+						}
+					case markdownLexer.RIGHT_PAREN:
+						str = "=> " + link
+					default:
+						str = g.resetTokenRenderForLinks(old_idx)
+					}
+				default:
+					str = g.resetTokenRenderForLinks(old_idx)
+				}
+			default:
+				str = g.resetTokenRenderForLinks(old_idx)
+			}
+		default:
+			str = g.resetTokenRenderForLinks(old_idx)
 		}
-		if i == 1 {
-			link = g.tokenStream[temp_idx].Literal
-		}
-		if i == 4 {
-			desc = g.tokenStream[temp_idx].Literal
-		}
-		temp_idx++
+	default:
+		str = token.Literal
 	}
-
-	g.idx = temp_idx
-
-	str = "=> " + link + " " + desc
 
 	return str
 }
@@ -100,19 +136,19 @@ func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	var str string
 	switch t.Type {
 	case markdownLexer.HEADER_ONE:
-		str = "# "
+		str = "#"
 	case markdownLexer.HEADER_TWO:
-		str =  "## "
+		str = "##"
 	case markdownLexer.HEADER_THREE:
-		str = "### "
+		str = "###"
 	case markdownLexer.INLINE_CODE:
 		str = t.Literal
 	case markdownLexer.CODE_BLOCK:
 		str = t.Literal
 	case markdownLexer.BULLET_MINUS:
-		str = "* "
+		str = "*"
 	case markdownLexer.BULLET_PLUS:
-		str = "* "
+		str = "*"
 	case markdownLexer.UNCHECKED:
 		str = t.Literal
 	case markdownLexer.CHECKED:
@@ -122,14 +158,11 @@ func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	case markdownLexer.RIGHT_BRACKET:
 		str = t.Literal
 	case markdownLexer.LEFT_BRACKET:
-		str = g.checkForLinkTokens()
-		if str == "" {
-			str = t.Literal
-		}
+		str = g.renderLeftBracket()
 	case markdownLexer.RIGHT_PAREN:
-
+		str = t.Literal
 	case markdownLexer.LEFT_PAREN:
-
+		str = t.Literal
 	case markdownLexer.ITALIC:
 		str = ""
 	case markdownLexer.BOLD:
@@ -142,6 +175,8 @@ func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 		str = t.Literal
 	case markdownLexer.NEW_LINE:
 		str = string('\n')
+	case markdownLexer.WHITESPACE:
+		str = " "
 	default:
 		str = ""
 	}
