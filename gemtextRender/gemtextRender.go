@@ -62,6 +62,35 @@ func (g *GemtextRender) peekNextToken() (markdownLexer.Token, error) {
 	return g.tokenStream[g.idx+1], nil
 }
 
+func (g *GemtextRender) checkForLinkTokens() string {
+	var str string
+	temp_idx := g.idx
+
+	var link string
+	var desc string
+
+	pattern := []string{markdownLexer.LEFT_BRACKET, markdownLexer.CONTENT, markdownLexer.RIGHT_BRACKET, markdownLexer.LEFT_PAREN, markdownLexer.CONTENT, markdownLexer.RIGHT_PAREN}
+
+	for i := 0; i < len(pattern); i++ {
+		if pattern[i] != string(g.tokenStream[temp_idx].Type) {
+			return ""
+		}
+		if i == 1 {
+			link = g.tokenStream[temp_idx].Literal
+		}
+		if i == 4 {
+			desc = g.tokenStream[temp_idx].Literal
+		}
+		temp_idx++
+	}
+
+	g.idx = temp_idx
+
+	str = "=> " + link + " " + desc
+
+	return str
+}
+
 /**
  * TODO: Implement render to gemtext
  *       TODO: Handle rendering of brackets for links
@@ -91,9 +120,12 @@ func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	case markdownLexer.QUOTE:
 		str = t.Literal
 	case markdownLexer.RIGHT_BRACKET:
-
+		str = t.Literal
 	case markdownLexer.LEFT_BRACKET:
-
+		str = g.checkForLinkTokens()
+		if str == "" {
+			str = t.Literal
+		}
 	case markdownLexer.RIGHT_PAREN:
 
 	case markdownLexer.LEFT_PAREN:

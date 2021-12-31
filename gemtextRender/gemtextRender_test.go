@@ -87,3 +87,26 @@ func TestRenderOnString(t *testing.T) {
 		t.Errorf("Did no properly render to gemtext the test string")
 	}
 }
+
+func TestLinkGeneration(t *testing.T) {
+	str := "[netbsd.org](NetBSD Website)"
+	l := new(markdownLexer.Lexer)
+	l.InitializeLexer(str)
+	var tokens []markdownLexer.Token
+	var tok markdownLexer.Token
+	tok = l.NextToken()
+	for tok.Type != markdownLexer.EOF {
+		tokens = append(tokens, tok)
+		tok = l.NextToken()
+	}
+	g := new(GemtextRender)
+	g.InitializeGemtextRender(tokens)
+	result, err := g.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue with rendering tokens")
+	}
+	expected := "=> netbsd.org NetBSD Website"
+	if result != expected {
+		t.Errorf("Issue with rendering a link")
+	}
+}
