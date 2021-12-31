@@ -48,7 +48,7 @@ func TestRenderHeaderTokens(t *testing.T) {
 func TestRenderBulletPoints(t *testing.T) {
 	var err error
 	str := "+ -"
-	l := new(markdownLexer.Lexer)
+	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
 	var tokens []markdownLexer.Token
 	var tok markdownLexer.Token
@@ -57,7 +57,7 @@ func TestRenderBulletPoints(t *testing.T) {
 		tokens = append(tokens, tok)
 		tok = l.NextToken()
 	}
-	g := new(GemtextRender)
+	var g GemtextRender
 	g.InitializeGemtextRender(tokens)
 	tok, err = g.readToken()
 	if err != nil {
@@ -77,7 +77,7 @@ func TestRenderBulletPoints(t *testing.T) {
 
 func TestRenderOnString(t *testing.T) {
 	str := "# HeaderOne\nSomeInformation about test\n *HelloWorld*"
-	l := new(markdownLexer.Lexer)
+	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
 	var tokens []markdownLexer.Token
 	var tok markdownLexer.Token
@@ -86,7 +86,7 @@ func TestRenderOnString(t *testing.T) {
 		tokens = append(tokens, tok)
 		tok = l.NextToken()
 	}
-	g := new(GemtextRender)
+	var g GemtextRender
 	g.InitializeGemtextRender(tokens)
 	result, err := g.RenderDocument()
 	if err != nil {
@@ -101,7 +101,7 @@ func TestRenderOnString(t *testing.T) {
 
 func TestLinkGeneration(t *testing.T) {
 	str := "[netbsd.org](NetBSD Website)"
-	l := new(markdownLexer.Lexer)
+	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
 	var tokens []markdownLexer.Token
 	var tok markdownLexer.Token
@@ -111,7 +111,7 @@ func TestLinkGeneration(t *testing.T) {
 		tok = l.NextToken()
 	}
 
-	g := new(GemtextRender)
+	var g GemtextRender
 	g.InitializeGemtextRender(tokens)
 	result, err := g.RenderDocument()
 	if err != nil {
@@ -126,7 +126,7 @@ func TestLinkGeneration(t *testing.T) {
 // need to troubleshoot test case
 func TestLeftBracketRender(t *testing.T) {
 	str := "[ netbsd.org(one)"
-	l := new(markdownLexer.Lexer)
+	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
 	var tokens []markdownLexer.Token
 	var tok markdownLexer.Token
@@ -138,7 +138,7 @@ func TestLeftBracketRender(t *testing.T) {
 
 	fmt.Println(tokens)
 
-	g := new(GemtextRender)
+	var g GemtextRender
 	g.InitializeGemtextRender(tokens)
 	result, err := g.RenderDocument()
 	if err != nil {
