@@ -257,7 +257,7 @@ func (l *Lexer) lexBracketToken() Token {
 func (l *Lexer) NextToken() Token {
 	var token Token
 
-	l.skipWhiteSpace()
+	//l.skipWhiteSpace()
 
 	// TODO: finish implementing state machine lexer
 	switch l.ch {
@@ -310,6 +310,9 @@ func (l *Lexer) NextToken() Token {
 		token.Literal = string(l.ch)
 	case '\n':
 		token.Type = NEW_LINE
+		token.Literal = string(l.ch)
+	case ' ' :
+		token.Type = WHITESPACE
 		token.Literal = string(l.ch)
 	case 0:
 		token.Type = EOF

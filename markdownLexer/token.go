@@ -49,6 +49,7 @@ const (
 
 	HORIZONTAL_RULE = "---"
 
+	WHITESPACE = " "
 	CONTENT = "content"
 
 	INVALID = "INVALID"
