@@ -121,7 +121,7 @@ func (g *GemtextRender) renderLeftBracket() string {
 			str = g.resetTokenRenderForLinks(old_idx)
 		}
 	default:
-		str = token.Literal
+		str = g.resetTokenRenderForLinks(old_idx)
 	}
 
 	return str
@@ -176,7 +176,7 @@ func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	case markdownLexer.NEW_LINE:
 		str = string('\n')
 	case markdownLexer.WHITESPACE:
-		str = " "
+		str = t.Literal
 	default:
 		str = ""
 	}
