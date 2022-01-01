@@ -11,11 +11,13 @@ type GemtextRender struct {
 	page string
 }
 
+/* Initialize the render by setting the token stream and idx to 0 */
 func (g *GemtextRender) InitializeGemtextRender(ts []markdownLexer.Token) {
 	g.tokenStream = ts
 	g.idx = 0
 }
 
+/* Move the GemtextRender Struct's idx one forward so long as it is not at the end of the document */
 func (g *GemtextRender) incrementIndex() bool {
 	if g.idx >= len(g.tokenStream) {
 		return false
@@ -24,6 +26,7 @@ func (g *GemtextRender) incrementIndex() bool {
 	return true
 }
 
+/* Read the token currently pointed to by GemtextRender's index */
 func (g *GemtextRender) readToken() (markdownLexer.Token, error) {
 	if g.idx >= len(g.tokenStream) {
 		var t markdownLexer.Token
@@ -34,6 +37,7 @@ func (g *GemtextRender) readToken() (markdownLexer.Token, error) {
 	return g.tokenStream[g.idx], nil
 }
 
+/* Called to process the input token stream to a string output of gemtext */
 func (g *GemtextRender) RenderDocument() (string, error) {
 	var gemtext string
 	var curr_token markdownLexer.Token
@@ -52,6 +56,7 @@ func (g *GemtextRender) RenderDocument() (string, error) {
 	return gemtext, nil
 }
 
+/* Look ahead to the next token */
 func (g *GemtextRender) peekNextToken() (markdownLexer.Token, error) {
 	if g.idx >= len(g.tokenStream) {
 		var t markdownLexer.Token
@@ -67,7 +72,8 @@ func (g *GemtextRender) resetTokenRenderForLinks(old_idx int) string {
 	return g.tokenStream[g.idx].Literal
 }
 
-// WIP: State machine for rendering link from markdown tokens to gemtext
+/* State machine to handle the decision tree of rendering either a left bracket token */
+/* or different forms of links that can exist from markdown tokens */
 func (g *GemtextRender) renderLeftBracket() string {
 	old_idx := g.idx
 
@@ -84,7 +90,7 @@ func (g *GemtextRender) renderLeftBracket() string {
 		g.incrementIndex()
 		switch token.Type {
 		case markdownLexer.CONTENT:
-			link = token.Literal
+			desc = token.Literal
 			token, _ = g.readToken()
 			g.incrementIndex()
 			switch token.Type {
@@ -97,7 +103,7 @@ func (g *GemtextRender) renderLeftBracket() string {
 					g.incrementIndex()
 					switch token.Type {
 					case markdownLexer.CONTENT:
-						desc = token.Literal
+						link = token.Literal
 						token, _ = g.readToken()
 						g.incrementIndex()
 						switch token.Type {
@@ -127,11 +133,7 @@ func (g *GemtextRender) renderLeftBracket() string {
 	return str
 }
 
-/**
- * TODO: Implement render to gemtext
- *       TODO: Handle rendering of brackets for links
- */
-
+/* Takes a token and renders that token to gemtext */
 func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	var str string
 	switch t.Type {
