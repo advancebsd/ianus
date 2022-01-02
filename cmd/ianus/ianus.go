@@ -26,6 +26,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	lex "github.com/advancebsd/ianus/markdownLexer"
+	gemtextRender "github.com/advancebsd/ianus/gemtextRender"
 )
 
 func main() {
@@ -53,5 +56,12 @@ func main() {
 		fmt.Println("\tl <directory_location> - specify alternative log directory")
 		os.Exit(0)
 	}
+
+	var lex = new(lex.Lexer)
+	var gr = new(gemtextRender.GemtextRender)
+
+	// code just to use these modules for compiling
+	lex.InitializeLexer("hello")
+	gr.InitializeGemtextRender(nil)
 
 }
