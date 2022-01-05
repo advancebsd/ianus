@@ -47,6 +47,9 @@ const (
 	UNCHECKED = "[ ]"
 	CHECKED   = "[x]"
 
+	HORIZONTAL_RULE = "---"
+
+	WHITESPACE = " "
 	CONTENT = "content"
 
 	INVALID = "INVALID"

@@ -105,7 +105,7 @@ func TestSingleCharTokenLexer(t *testing.T) {
 		tok = append(tok, token)
 		token = l.NextToken()
 	}
-	if len(tok) != 7 {
+	if len(tok) != 8 {
 		t.Errorf("Did not read the proper amount of tokens")
 	}
 	if tok[0].Type != LEFT_BRACKET {
@@ -126,7 +126,10 @@ func TestSingleCharTokenLexer(t *testing.T) {
 	if tok[5].Type != INLINE_CODE {
 		t.Errorf("Did not read in line code token")
 	}
-	if tok[6].Type != CODE_BLOCK {
+	if tok[6].Type != WHITESPACE {
+		t.Errorf("Did not read the white space token")
+	}
+	if tok[7].Type != CODE_BLOCK {
 		t.Errorf("Did not read code block token")
 	}
 
@@ -176,8 +179,12 @@ func TestReadContent(t *testing.T) {
 		t.Errorf("Did not properly read in token for header in the beginning")
 	}
 	tok = lex.NextToken()
+	if tok.Type != WHITESPACE {
+		t.Errorf("\nWhite space not read")
+	}
+	tok = lex.NextToken()
 	if tok.Type != CONTENT {
-		t.Errorf("Did not properly read the content 'Hello World'")
+		t.Errorf("Did not properly read the content 'Hello'")
 	}
 	tok = lex.NextToken()
 	if tok.Type != BOLD_ITALIC {
@@ -195,6 +202,10 @@ func TestBulletPoints(t *testing.T) {
 		t.Errorf("Did not properly parse plus signed used as a bullet")
 	}
 	token = l.NextToken()
+	if token.Type != WHITESPACE {
+		t.Errorf("Did not parse the white space properly after the plus bullet token")
+	}
+	token = l.NextToken()
 	if token.Type != CONTENT {
 		t.Errorf("Content not properly parsed after bullt point plus")
 	}
@@ -206,6 +217,10 @@ func TestBulletPoints(t *testing.T) {
 	token1 = l1.NextToken()
 	if token1.Type != BULLET_MINUS {
 		t.Errorf("Did not properly parse the minus bullet point")
+	}
+	token1 = l1.NextToken()
+	if token1.Type != WHITESPACE {
+		t.Errorf("Did not properly parse the white space after the minus bullet token")
 	}
 	token1 = l1.NextToken()
 	if token1.Type != CONTENT {
@@ -224,8 +239,16 @@ func TestBracketTokens(t *testing.T) {
 		t.Errorf("Failed to parse the unchecked markdown token properly")
 	}
 	token = l.NextToken()
+	if token.Type != WHITESPACE {
+		t.Errorf("Could not parse white space after unchecked token")
+	}
+	token = l.NextToken()
 	if token.Type != CHECKED {
 		t.Errorf("Failed to parse the checked markdown token properly")
+	}
+	token = l.NextToken()
+	if token.Type != WHITESPACE {
+		t.Errorf("Could not parse the whitespace after the checked token")
 	}
 	token = l.NextToken()
 	if token.Type != LEFT_BRACKET {

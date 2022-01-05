@@ -135,6 +135,25 @@ func (l *Lexer) lexHeaderToken() Token {
 	return t
 }
 
+/* Lex the dash tokens as either bullet points or horizontal rules */
+func (l *Lexer) lexHorizontalRule() Token {
+	var t Token
+
+	str := l.getRepeatCharToken(l.ch)
+	if str == "-" {
+		t.Type = BULLET_MINUS
+		t.Literal = str
+	} else if str == "---" {
+		t.Type = HORIZONTAL_RULE
+		t.Literal = str
+	} else {
+		t.Type = INVALID
+		t.Literal = str
+	}
+
+	return t
+}
+
 /* check if the character is a letter between A and Z, upper and lower case */
 func isLetter(ch byte) bool {
 	return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
@@ -238,8 +257,6 @@ func (l *Lexer) lexBracketToken() Token {
 func (l *Lexer) NextToken() Token {
 	var token Token
 
-	l.skipWhiteSpace()
-
 	// TODO: finish implementing state machine lexer
 	switch l.ch {
 
@@ -252,8 +269,6 @@ func (l *Lexer) NextToken() Token {
 	case '[':
 		token = l.lexBracketToken()
 		return token
-		// token.Type = LEFT_BRACKET
-		// token.Literal = string(l.ch)
 	case ']':
 		token.Type = RIGHT_BRACKET
 		token.Literal = string(l.ch)
@@ -284,13 +299,16 @@ func (l *Lexer) NextToken() Token {
 		token.Type = EXCLAMATION
 		token.Literal = string(l.ch)
 	case '-':
-		token.Type = BULLET_MINUS
-		token.Literal = string(l.ch)
+		token = l.lexHorizontalRule()
+		return token
 	case '+':
 		token.Type = BULLET_PLUS
 		token.Literal = string(l.ch)
 	case '\n':
 		token.Type = NEW_LINE
+		token.Literal = string(l.ch)
+	case ' ' :
+		token.Type = WHITESPACE
 		token.Literal = string(l.ch)
 	case 0:
 		token.Type = EOF
@@ -301,6 +319,7 @@ func (l *Lexer) NextToken() Token {
 		token.Literal = content
 		return token
 	}
+
 	l.readChar()
 
 	return token
