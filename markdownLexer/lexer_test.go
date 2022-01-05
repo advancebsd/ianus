@@ -311,3 +311,23 @@ func TestAgainstRemoteSource(t *testing.T) {
 		}
 	}
 }
+
+/* test punctuation */
+func TestContentWithPunctuation(t *testing.T) {
+	str := "This, is a string with \"some punctuation \" to check that there isn't any issue reading it"
+	var lex Lexer
+	lex.InitializeLexer(str)
+	var token Token
+	var tokens []Token
+	token = lex.NextToken()
+	for token.Type != EOF {
+		tokens = append(tokens, token)
+		token = lex.NextToken()
+	}
+	if len(tokens) != 1 {
+		t.Errorf("To many tokens were read in")
+	}
+	if tokens[0].Type != CONTENT {
+		t.Errorf("The incorrect token type was generated")
+	}
+}

@@ -161,7 +161,7 @@ func isDigit(ch byte) bool {
 
 /* check for allowed punctuation in content block */
 func isPunctuation(ch byte) bool {
-	return ch == '.' || ch == ',' || ch == '_' || ch == ':' || ch == '/' || ch == '?' || ch == '!'
+	return ch == '.' || ch == ',' || ch == '_' || ch == ':' || ch == '/' || ch == '?' || ch == '!' || ch == '\'' || ch == '"'
 }
 
 func isContentWhiteSpace(ch byte) bool {
