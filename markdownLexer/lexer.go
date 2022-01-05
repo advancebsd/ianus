@@ -1,10 +1,5 @@
 package markdownLexer
 
-/**
- * TODO: Implement lexer
- * TODO: Write test cases
- */
-
 type Lexer struct {
 	input        string
 	position     int // current position in input
@@ -253,9 +248,50 @@ func (l *Lexer) lexBracketToken() Token {
 	return token
 }
 
+func (l *Lexer) checkPrevTokenForBlock() bool {
+	size := l.getNumberTokens()
+	if size < 1 {
+		return false
+	}
+
+	if l.tokens[size].Type == INLINE_CODE || l.tokens[size].Type == CODE_BLOCK {
+		return true
+	}
+
+	return false
+}
+
+func (l *Lexer) checkForBlockEnd() bool {
+	if l.ch == '`' {
+		return true
+	}
+
+	return false
+}
+
+func (l *Lexer) readBlock() string {
+	pos := l.position
+	for l.checkForBlockEnd() != true {
+		l.readChar()
+	}
+
+	return l.input[pos:l.position]
+}
+
+/* Get the previous Token read */
+func (l *Lexer) getNumberTokens() int {
+	return len(l.tokens)
+}
+
 /* Read the the next token in input */
 func (l *Lexer) NextToken() Token {
 	var token Token
+
+	if l.checkPrevTokenForBlock() {
+		token.Type = CONTENT
+		token.Literal = l.readBlock()
+		return token
+	}
 
 	// TODO: finish implementing state machine lexer
 	switch l.ch {
