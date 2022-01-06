@@ -331,3 +331,26 @@ func TestContentWithPunctuation(t *testing.T) {
 		t.Errorf("The incorrect token type was generated")
 	}
 }
+
+/* test for unicode characters */
+func TestUnicodeCharacters(t *testing.T) {
+	str := "£YË"
+	var lex Lexer
+	lex.InitializeLexer(str)
+	var tokens []Token
+	var token Token
+	token = lex.NextToken()
+	for token.Type != EOF {
+		tokens = append(tokens, token)
+		token = lex.NextToken()
+	}
+	if len(tokens) != 1 {
+		t.Errorf("Did not read unicode content properly")
+	}
+	if tokens[0].Type != CONTENT {
+		t.Errorf("Did not type the token properly")
+	}
+	if tokens[0].Literal != "£YË" {
+		t.Errorf("Did not catpure the literal of token correctly")
+	}
+}
