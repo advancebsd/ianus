@@ -4,7 +4,8 @@ type Lexer struct {
 	input        string
 	position     int // current position in input
 	readPosition int // next position in input
-	ch           byte
+	runes        []rune
+	ch           rune
 	tokens       []Token
 }
 
@@ -16,9 +17,10 @@ func (l *Lexer) GetTokens() []Token {
 /* Set the input of Lexer instance */
 func (l *Lexer) InitializeLexer(in string) {
 	l.input = in
+	l.runes = []rune(in)
 	l.position = 0
 	l.readPosition = 1
-	l.ch = l.input[l.position]
+	l.ch = l.runes[l.position]
 }
 
 /* Advances the position in input */
@@ -26,7 +28,7 @@ func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
 	} else {
-		l.ch = l.input[l.readPosition]
+		l.ch = l.runes[l.readPosition]
 	}
 	l.position = l.readPosition
 	l.readPosition += 1
@@ -75,7 +77,7 @@ func (l *Lexer) lexEscapeToken(id byte) Token {
 }
 
 /* Used to get repeacted characters that may be a token */
-func (l *Lexer) getRepeatCharToken(ch byte) string {
+func (l *Lexer) getRepeatCharToken(ch rune) string {
 	pos := l.position
 	for l.ch == ch {
 		l.readChar()
@@ -150,21 +152,21 @@ func (l *Lexer) lexHorizontalRule() Token {
 }
 
 /* check if the character is a letter between A and Z, upper and lower case */
-func isLetter(ch byte) bool {
+func isLetter(ch rune) bool {
 	return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
 }
 
 /* check if the digit is a ascii number between 0 and 9 */
-func isDigit(ch byte) bool {
+func isDigit(ch rune) bool {
 	return ch >= '0' && ch <= '9'
 }
 
 /* check for allowed punctuation in content block */
-func isPunctuation(ch byte) bool {
+func isPunctuation(ch rune) bool {
 	return ch == '.' || ch == ',' || ch == '_' || ch == ':' || ch == '/' || ch == '?' || ch == '!' || ch == '\'' || ch == '"'
 }
 
-func isContentWhiteSpace(ch byte) bool {
+func isContentWhiteSpace(ch rune) bool {
 	return ch == ' '
 }
 
@@ -315,7 +317,7 @@ func (l *Lexer) NextToken() Token {
 		token.Type = RIGHT_PAREN
 		token.Literal = string(l.ch)
 	case '`':
-		var c []byte
+		var c []rune
 		for l.ch == '`' {
 			c = append(c, l.ch)
 			l.readChar()
