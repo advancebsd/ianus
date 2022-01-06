@@ -23,11 +23,11 @@ func TestInitializerLexer(t *testing.T) {
 func TestReadChar(t *testing.T) {
 	l := new(Lexer)
 	l.InitializeLexer("hello")
-	if l.ch != byte(l.input[0]) {
+	if l.ch != rune(l.input[0]) {
 		t.Errorf("Improper Initialization")
 	}
 	l.readChar()
-	if l.ch != byte(l.input[1]) {
+	if l.ch != rune(l.input[1]) {
 		t.Errorf("Did no advance properly")
 	}
 }
@@ -37,7 +37,7 @@ func TestSkipWhiteSpace(t *testing.T) {
 	l := new(Lexer)
 	l.InitializeLexer(testString)
 	l.skipWhiteSpace()
-	if l.ch != byte(testString[1]) {
+	if l.ch != rune(testString[1]) {
 		t.Errorf("White space not skipped")
 	}
 }
