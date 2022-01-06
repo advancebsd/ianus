@@ -132,25 +132,6 @@ func (l *Lexer) lexHeaderToken() Token {
 	return t
 }
 
-/* Lex the dash tokens as either bullet points or horizontal rules */
-func (l *Lexer) lexHorizontalRule() Token {
-	var t Token
-
-	str := l.getRepeatCharToken(l.ch)
-	if str == "-" {
-		t.Type = BULLET_MINUS
-		t.Literal = str
-	} else if str == "---" {
-		t.Type = HORIZONTAL_RULE
-		t.Literal = str
-	} else {
-		t.Type = INVALID
-		t.Literal = str
-	}
-
-	return t
-}
-
 /* check if the character is a letter between A and Z, upper and lower case */
 func isLetter(ch rune) bool {
 	return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
@@ -283,6 +264,28 @@ func (l *Lexer) getNumberTokens() int {
 	return len(l.tokens)
 }
 
+func (l *Lexer) lexDash () Token {
+	pos := l.position
+	var r []rune
+	var t Token
+	for l.ch  == '-' {
+		l.readChar()
+	}
+	r = l.runes[pos:l.position]
+	if len(r) == 1 {
+		t.Type = BULLET_MINUS
+		t.Literal = string(r)
+	} else if len(r) > 3 {
+		t.Type = HORIZONTAL_RULE
+		t.Literal = string(r)
+	} else {
+		t.Type = INVALID
+		t.Literal = string(r)
+	}
+	return t
+
+}
+
 /* Read the the next token in input */
 func (l *Lexer) NextToken() Token {
 	var token Token
@@ -335,7 +338,7 @@ func (l *Lexer) NextToken() Token {
 		token.Type = EXCLAMATION
 		token.Literal = string(l.ch)
 	case '-':
-		token = l.lexHorizontalRule()
+		token = l.lexDash()
 		return token
 	case '+':
 		token.Type = BULLET_PLUS
