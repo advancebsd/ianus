@@ -172,13 +172,13 @@ func isContentWhiteSpace(ch rune) bool {
 
 func (l *Lexer) readContent() string {
 	pos := l.position
-	for isLetter(l.ch) || isDigit(l.ch) || isPunctuation(l.ch) || isContentWhiteSpace(l.ch) {
+	for isToken(l.ch) == false {
 		l.readChar()
 	}
 	return l.input[pos:l.position]
 }
 
-func isToken(ch byte) bool {
+func isToken(ch rune) bool {
 	switch ch {
 	case '#':
 		return true
@@ -193,8 +193,6 @@ func isToken(ch byte) bool {
 	case ')':
 		return true
 	case '`':
-		return true
-	case '!':
 		return true
 	case '-':
 		return true
