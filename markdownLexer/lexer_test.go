@@ -163,6 +163,7 @@ func TestReadContent(t *testing.T) {
 		tokens = append(tokens, token)
 		token = l.NextToken()
 	}
+
 	if tokens[0].Type != CONTENT {
 		t.Errorf("Could not parse 'hello . world ' as content")
 	}
