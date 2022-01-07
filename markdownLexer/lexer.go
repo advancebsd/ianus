@@ -25,7 +25,7 @@ func (l *Lexer) InitializeLexer(in string) {
 
 /* Advances the position in input */
 func (l *Lexer) readChar() {
-	if l.readPosition >= len(l.input) {
+	if l.readPosition >= len(l.runes) {
 		l.ch = 0
 	} else {
 		l.ch = l.runes[l.readPosition]
@@ -41,15 +41,15 @@ func (l *Lexer) skipWhiteSpace() {
 }
 
 /* Look ahead to the next character in the stream */
-func (l *Lexer) lookAheadNextChar() byte {
+func (l *Lexer) lookAheadNextChar() rune {
 	if l.readPosition >= len(l.input) {
 		return 0
 	}
-	return l.input[l.readPosition]
+	return l.runes[l.readPosition]
 }
 
 /* Lex the character being excaped from in token */
-func (l *Lexer) lexEscapeToken(id byte) Token {
+func (l *Lexer) lexEscapeToken(id rune) Token {
 	var t Token
 
 	switch id {
@@ -83,7 +83,7 @@ func (l *Lexer) getRepeatCharToken(ch rune) string {
 		l.readChar()
 	}
 
-	return l.input[pos:l.position]
+	return string(l.runes[pos:l.position])
 }
 
 /* Lex the type of emphasis toke */
@@ -133,30 +133,30 @@ func (l *Lexer) lexHeaderToken() Token {
 }
 
 /* check if the character is a letter between A and Z, upper and lower case */
-func isLetter(ch rune) bool {
-	return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
+func (l *Lexer) isLetter() bool {
+	return l.ch >= 'A' && l.ch <= 'Z' ||l.ch >= 'a' && l.ch <= 'z' || l.ch >= 0x7E
 }
 
 /* check if the digit is a ascii number between 0 and 9 */
-func isDigit(ch rune) bool {
-	return ch >= '0' && ch <= '9'
+func (l *Lexer) isDigit() bool {
+	return l.ch >= '0' && l.ch <= '9'
 }
 
 /* check for allowed punctuation in content block */
-func isPunctuation(ch rune) bool {
-	return ch == '.' || ch == ',' || ch == '_' || ch == ':' || ch == '/' || ch == '?' || ch == '!' || ch == '\'' || ch == '"'
+func (l *Lexer) isPunctuation() bool {
+	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"'
 }
 
-func isContentWhiteSpace(ch rune) bool {
-	return ch == ' '
+func (l *Lexer) isContentWhiteSpace() bool {
+	return l.ch == ' '
 }
 
 func (l *Lexer) readContent() string {
 	pos := l.position
-	for l.isToken() == false {
+	for l.isPunctuation() || l.isDigit() || l.isLetter() || l.isPunctuation() || l.isContentWhiteSpace() {
 		l.readChar()
 	}
-	return l.input[pos:l.position]
+	return string(l.runes[pos:l.position])
 }
 
 func (l *Lexer) isToken() bool {
@@ -296,7 +296,6 @@ func (l *Lexer) NextToken() Token {
 		return token
 	}
 
-	// TODO: finish implementing state machine lexer
 	switch l.ch {
 
 	case '#':
