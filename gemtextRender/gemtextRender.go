@@ -108,12 +108,12 @@ func (g *GemtextRender) renderLeftBracket() string {
 						g.incrementIndex()
 						switch token.Type {
 						case markdownLexer.RIGHT_PAREN:
-							str = "=> " + link + " " + desc
+							str = "=> " + link + " " + desc + "\n"
 						default:
 							str = g.resetTokenRenderForLinks(old_idx)
 						}
 					case markdownLexer.RIGHT_PAREN:
-						str = "=> " + link
+						str = "=> " + link + "\n"
 					default:
 						str = g.resetTokenRenderForLinks(old_idx)
 					}
