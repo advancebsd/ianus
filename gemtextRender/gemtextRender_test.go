@@ -171,7 +171,6 @@ func TestSampleFile(t *testing.T) {
 	var g GemtextRender
 	g.InitializeGemtextRender(tokens)
 	result, err := g.RenderDocument()
-	//fmt.Println(result)
 
 	file_expected := "sample/expected.gmi"
 	expected, err := os.ReadFile(file_expected)
@@ -181,11 +180,6 @@ func TestSampleFile(t *testing.T) {
 
 	result_bytes := []byte(result)
 	expected_bytes := []byte(string(expected))
-
-	// if len(result_bytes) != len(expected_bytes) {
-	// 	t.Errorf("Size of output file does not match expected file")
-	// 	t.Errorf("Size result: %d, size expected: %d", len(result_bytes), len(expected_bytes))
-	// }
 
 	for i := 0; i < len(expected_bytes); i++ {
 		if result_bytes[i] != expected_bytes[i] {
