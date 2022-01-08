@@ -120,7 +120,7 @@ func TestLinkGeneration(t *testing.T) {
 	if err != nil {
 		t.Errorf("Issue with rendering tokens")
 	}
-	expected := "=> netbsd.org NetBSD Website"
+	expected := "=> netbsd.org NetBSD Website\n"
 	if result != expected {
 		t.Errorf("Issue with rendering a link")
 	}
