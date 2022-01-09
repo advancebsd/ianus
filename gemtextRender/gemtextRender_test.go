@@ -49,7 +49,7 @@ func TestRenderHeaderTokens(t *testing.T) {
 /* Test rendering gemtext bullet points from markdown tokens */
 func TestRenderBulletPoints(t *testing.T) {
 	var err error
-	str := "+ -"
+	str := "+\n-"
 	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
 	var tokens []markdownLexer.Token
@@ -185,5 +185,31 @@ func TestSampleFile(t *testing.T) {
 		if result_bytes[i] != expected_bytes[i] {
 			t.Errorf("Non matching characters as index: %d. Expected: %c, Actual: %c", i, expected_bytes[i], result_bytes[i])
 		}
+	}
+}
+
+func TestRenderBulletMinus (t *testing.T) {
+	str := "string-with-dashes"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var token markdownLexer.Token
+	var tokens []markdownLexer.Token
+	token = l.NextToken()
+	for token.Type != markdownLexer.EOF {
+		tokens = append(tokens, token)
+		token = l.NextToken()
+	}
+	var g GemtextRender
+	g.InitializeGemtextRender(tokens)
+	result, err := g.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue with rendering document from test string")
+	}
+	expected := "string-with-dashes"
+	if len(tokens) != 5 {
+		t.Errorf("Read the inproper amount of tokens")
+	}
+	if expected != result {
+		t.Errorf("Expected and result do not match. Expected: %s, Result: %s", expected, result)
 	}
 }

@@ -141,7 +141,7 @@ func (g *GemtextRender) renderLeftBracket() string {
 		str = g.resetTokenRenderForLinks(old_idx)
 	}
 
-	if isLink {
+	if isLink && old_idx > 0 {
 		if g.tokenStream[old_idx - 1].Type != markdownLexer.NEW_LINE {
 			str = "\n" + str
 		}
