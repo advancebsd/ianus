@@ -150,6 +150,15 @@ func (g *GemtextRender) renderLeftBracket() string {
 	return str
 }
 
+func (g *GemtextRender) renderBulletMinus () string {
+	if g.hasPrevToken() {
+		if g.tokenStream[g.idx-1].Type == markdownLexer.NEW_LINE {
+			return "*"
+		}
+	}
+	return "-"
+}
+
 /* Takes a token and renders that token to gemtext */
 func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	var str string
@@ -165,7 +174,7 @@ func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	case markdownLexer.CODE_BLOCK:
 		str = t.Literal
 	case markdownLexer.BULLET_MINUS:
-		str = "*"
+		str = g.renderBulletMinus()
 	case markdownLexer.BULLET_PLUS:
 		str = "*"
 	case markdownLexer.UNCHECKED:
