@@ -154,6 +154,8 @@ func (g *GemtextRender) renderBulletMinus () string {
 	if g.hasPrevToken() {
 		if g.tokenStream[g.idx-1].Type == markdownLexer.NEW_LINE {
 			return "*"
+		} else {
+			return "-"
 		}
 	}
 	return "-"
