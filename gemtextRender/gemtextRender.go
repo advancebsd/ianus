@@ -67,6 +67,14 @@ func (g *GemtextRender) peekNextToken() (markdownLexer.Token, error) {
 	return g.tokenStream[g.idx+1], nil
 }
 
+func (g *GemtextRender) hasPrevToken () bool {
+	return g.idx > 0
+}
+
+func (g *GemtextRender) getPrevTokenType() markdownLexer.Token {
+	return g.tokenStream[g.idx-1];
+}
+
 func (g *GemtextRender) resetTokenRenderForLinks(old_idx int) string {
 	g.idx = old_idx
 	return g.tokenStream[g.idx].Literal
@@ -76,6 +84,7 @@ func (g *GemtextRender) resetTokenRenderForLinks(old_idx int) string {
 /* or different forms of links that can exist from markdown tokens */
 func (g *GemtextRender) renderLeftBracket() string {
 	old_idx := g.idx
+	var isLink bool = false
 
 	var str string
 	var link string
@@ -109,11 +118,13 @@ func (g *GemtextRender) renderLeftBracket() string {
 						switch token.Type {
 						case markdownLexer.RIGHT_PAREN:
 							str = "=> " + link + " " + desc + "\n"
+							isLink = true
 						default:
 							str = g.resetTokenRenderForLinks(old_idx)
 						}
 					case markdownLexer.RIGHT_PAREN:
 						str = "=> " + link + "\n"
+						isLink = true
 					default:
 						str = g.resetTokenRenderForLinks(old_idx)
 					}
@@ -128,6 +139,12 @@ func (g *GemtextRender) renderLeftBracket() string {
 		}
 	default:
 		str = g.resetTokenRenderForLinks(old_idx)
+	}
+
+	if isLink {
+		if g.tokenStream[old_idx - 1].Type != markdownLexer.NEW_LINE {
+			str = "\n" + str
+		}
 	}
 
 	return str
