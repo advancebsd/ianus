@@ -49,7 +49,7 @@ func TestRenderHeaderTokens(t *testing.T) {
 /* Test rendering gemtext bullet points from markdown tokens */
 func TestRenderBulletPoints(t *testing.T) {
 	var err error
-	str := "+ -"
+	str := "+\n-"
 	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
 	var tokens []markdownLexer.Token
@@ -120,7 +120,7 @@ func TestLinkGeneration(t *testing.T) {
 	if err != nil {
 		t.Errorf("Issue with rendering tokens")
 	}
-	expected := "=> netbsd.org NetBSD Website"
+	expected := "=> netbsd.org NetBSD Website\n"
 	if result != expected {
 		t.Errorf("Issue with rendering a link")
 	}
@@ -171,7 +171,6 @@ func TestSampleFile(t *testing.T) {
 	var g GemtextRender
 	g.InitializeGemtextRender(tokens)
 	result, err := g.RenderDocument()
-	//fmt.Println(result)
 
 	file_expected := "sample/expected.gmi"
 	expected, err := os.ReadFile(file_expected)
@@ -182,14 +181,35 @@ func TestSampleFile(t *testing.T) {
 	result_bytes := []byte(result)
 	expected_bytes := []byte(string(expected))
 
-	// if len(result_bytes) != len(expected_bytes) {
-	// 	t.Errorf("Size of output file does not match expected file")
-	// 	t.Errorf("Size result: %d, size expected: %d", len(result_bytes), len(expected_bytes))
-	// }
-
 	for i := 0; i < len(expected_bytes); i++ {
 		if result_bytes[i] != expected_bytes[i] {
 			t.Errorf("Non matching characters as index: %d. Expected: %c, Actual: %c", i, expected_bytes[i], result_bytes[i])
 		}
+	}
+}
+
+func TestRenderBulletMinus (t *testing.T) {
+	str := "string-with-dashes"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var token markdownLexer.Token
+	var tokens []markdownLexer.Token
+	token = l.NextToken()
+	for token.Type != markdownLexer.EOF {
+		tokens = append(tokens, token)
+		token = l.NextToken()
+	}
+	var g GemtextRender
+	g.InitializeGemtextRender(tokens)
+	result, err := g.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue with rendering document from test string")
+	}
+	expected := "string-with-dashes"
+	if len(tokens) != 5 {
+		t.Errorf("Read the inproper amount of tokens")
+	}
+	if expected != result {
+		t.Errorf("Expected and result do not match. Expected: %s, Result: %s", expected, result)
 	}
 }

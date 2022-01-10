@@ -67,6 +67,14 @@ func (g *GemtextRender) peekNextToken() (markdownLexer.Token, error) {
 	return g.tokenStream[g.idx+1], nil
 }
 
+func (g *GemtextRender) hasPrevToken () bool {
+	return g.idx > 0
+}
+
+func (g *GemtextRender) getPrevTokenType() markdownLexer.Token {
+	return g.tokenStream[g.idx-1];
+}
+
 func (g *GemtextRender) resetTokenRenderForLinks(old_idx int) string {
 	g.idx = old_idx
 	return g.tokenStream[g.idx].Literal
@@ -76,6 +84,7 @@ func (g *GemtextRender) resetTokenRenderForLinks(old_idx int) string {
 /* or different forms of links that can exist from markdown tokens */
 func (g *GemtextRender) renderLeftBracket() string {
 	old_idx := g.idx
+	var isLink bool = false
 
 	var str string
 	var link string
@@ -108,12 +117,14 @@ func (g *GemtextRender) renderLeftBracket() string {
 						g.incrementIndex()
 						switch token.Type {
 						case markdownLexer.RIGHT_PAREN:
-							str = "=> " + link + " " + desc
+							str = "=> " + link + " " + desc + "\n"
+							isLink = true
 						default:
 							str = g.resetTokenRenderForLinks(old_idx)
 						}
 					case markdownLexer.RIGHT_PAREN:
-						str = "=> " + link
+						str = "=> " + link + "\n"
+						isLink = true
 					default:
 						str = g.resetTokenRenderForLinks(old_idx)
 					}
@@ -130,7 +141,24 @@ func (g *GemtextRender) renderLeftBracket() string {
 		str = g.resetTokenRenderForLinks(old_idx)
 	}
 
+	if isLink && old_idx > 0 {
+		if g.tokenStream[old_idx - 1].Type != markdownLexer.NEW_LINE {
+			str = "\n" + str
+		}
+	}
+
 	return str
+}
+
+func (g *GemtextRender) renderBulletMinus () string {
+	if g.hasPrevToken() {
+		if g.tokenStream[g.idx-1].Type == markdownLexer.NEW_LINE {
+			return "*"
+		} else {
+			return "-"
+		}
+	}
+	return "-"
 }
 
 /* Takes a token and renders that token to gemtext */
@@ -148,7 +176,7 @@ func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	case markdownLexer.CODE_BLOCK:
 		str = t.Literal
 	case markdownLexer.BULLET_MINUS:
-		str = "*"
+		str = g.renderBulletMinus()
 	case markdownLexer.BULLET_PLUS:
 		str = "*"
 	case markdownLexer.UNCHECKED:
