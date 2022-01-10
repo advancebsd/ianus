@@ -23,11 +23,11 @@ func TestInitializerLexer(t *testing.T) {
 func TestReadChar(t *testing.T) {
 	l := new(Lexer)
 	l.InitializeLexer("hello")
-	if l.ch != byte(l.input[0]) {
+	if l.ch != rune(l.input[0]) {
 		t.Errorf("Improper Initialization")
 	}
 	l.readChar()
-	if l.ch != byte(l.input[1]) {
+	if l.ch != rune(l.input[1]) {
 		t.Errorf("Did no advance properly")
 	}
 }
@@ -37,7 +37,7 @@ func TestSkipWhiteSpace(t *testing.T) {
 	l := new(Lexer)
 	l.InitializeLexer(testString)
 	l.skipWhiteSpace()
-	if l.ch != byte(testString[1]) {
+	if l.ch != rune(testString[1]) {
 		t.Errorf("White space not skipped")
 	}
 }
@@ -163,6 +163,7 @@ func TestReadContent(t *testing.T) {
 		tokens = append(tokens, token)
 		token = l.NextToken()
 	}
+
 	if tokens[0].Type != CONTENT {
 		t.Errorf("Could not parse 'hello . world ' as content")
 	}
@@ -309,5 +310,48 @@ func TestAgainstRemoteSource(t *testing.T) {
 		if curr.Type == INVALID {
 			t.Errorf("Found an invalid token! [%d] %s : %s", i, curr.Type, curr.Literal)
 		}
+	}
+}
+
+/* test punctuation */
+func TestContentWithPunctuation(t *testing.T) {
+	str := "This, is a string with \"some punctuation \" to check that there isn't any issue reading it"
+	var lex Lexer
+	lex.InitializeLexer(str)
+	var token Token
+	var tokens []Token
+	token = lex.NextToken()
+	for token.Type != EOF {
+		tokens = append(tokens, token)
+		token = lex.NextToken()
+	}
+	if len(tokens) != 1 {
+		t.Errorf("To many tokens were read in")
+	}
+	if tokens[0].Type != CONTENT {
+		t.Errorf("The incorrect token type was generated")
+	}
+}
+
+/* test for unicode characters */
+func TestUnicodeCharacters(t *testing.T) {
+	str := "£YË"
+	var lex Lexer
+	lex.InitializeLexer(str)
+	var tokens []Token
+	var token Token
+	token = lex.NextToken()
+	for token.Type != EOF {
+		tokens = append(tokens, token)
+		token = lex.NextToken()
+	}
+	if len(tokens) != 1 {
+		t.Errorf("Did not read unicode content properly")
+	}
+	if tokens[0].Type != CONTENT {
+		t.Errorf("Did not type the token properly")
+	}
+	if tokens[0].Literal != "£YË" {
+		t.Errorf("Did not catpure the literal of token correctly")
 	}
 }

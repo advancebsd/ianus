@@ -1,15 +1,11 @@
 package markdownLexer
 
-/**
- * TODO: Implement lexer
- * TODO: Write test cases
- */
-
 type Lexer struct {
 	input        string
 	position     int // current position in input
 	readPosition int // next position in input
-	ch           byte
+	runes        []rune
+	ch           rune
 	tokens       []Token
 }
 
@@ -21,17 +17,18 @@ func (l *Lexer) GetTokens() []Token {
 /* Set the input of Lexer instance */
 func (l *Lexer) InitializeLexer(in string) {
 	l.input = in
+	l.runes = []rune(in)
 	l.position = 0
 	l.readPosition = 1
-	l.ch = l.input[l.position]
+	l.ch = l.runes[l.position]
 }
 
 /* Advances the position in input */
 func (l *Lexer) readChar() {
-	if l.readPosition >= len(l.input) {
+	if l.readPosition >= len(l.runes) {
 		l.ch = 0
 	} else {
-		l.ch = l.input[l.readPosition]
+		l.ch = l.runes[l.readPosition]
 	}
 	l.position = l.readPosition
 	l.readPosition += 1
@@ -44,15 +41,15 @@ func (l *Lexer) skipWhiteSpace() {
 }
 
 /* Look ahead to the next character in the stream */
-func (l *Lexer) lookAheadNextChar() byte {
+func (l *Lexer) lookAheadNextChar() rune {
 	if l.readPosition >= len(l.input) {
 		return 0
 	}
-	return l.input[l.readPosition]
+	return l.runes[l.readPosition]
 }
 
 /* Lex the character being excaped from in token */
-func (l *Lexer) lexEscapeToken(id byte) Token {
+func (l *Lexer) lexEscapeToken(id rune) Token {
 	var t Token
 
 	switch id {
@@ -80,13 +77,13 @@ func (l *Lexer) lexEscapeToken(id byte) Token {
 }
 
 /* Used to get repeacted characters that may be a token */
-func (l *Lexer) getRepeatCharToken(ch byte) string {
+func (l *Lexer) getRepeatCharToken(ch rune) string {
 	pos := l.position
 	for l.ch == ch {
 		l.readChar()
 	}
 
-	return l.input[pos:l.position]
+	return string(l.runes[pos:l.position])
 }
 
 /* Lex the type of emphasis toke */
@@ -135,54 +132,35 @@ func (l *Lexer) lexHeaderToken() Token {
 	return t
 }
 
-/* Lex the dash tokens as either bullet points or horizontal rules */
-func (l *Lexer) lexHorizontalRule() Token {
-	var t Token
-
-	str := l.getRepeatCharToken(l.ch)
-	if str == "-" {
-		t.Type = BULLET_MINUS
-		t.Literal = str
-	} else if str == "---" {
-		t.Type = HORIZONTAL_RULE
-		t.Literal = str
-	} else {
-		t.Type = INVALID
-		t.Literal = str
-	}
-
-	return t
-}
-
 /* check if the character is a letter between A and Z, upper and lower case */
-func isLetter(ch byte) bool {
-	return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
+func (l *Lexer) isLetter() bool {
+	return l.ch >= 'A' && l.ch <= 'Z' ||l.ch >= 'a' && l.ch <= 'z' || l.ch >= 0x7E
 }
 
 /* check if the digit is a ascii number between 0 and 9 */
-func isDigit(ch byte) bool {
-	return ch >= '0' && ch <= '9'
+func (l *Lexer) isDigit() bool {
+	return l.ch >= '0' && l.ch <= '9'
 }
 
 /* check for allowed punctuation in content block */
-func isPunctuation(ch byte) bool {
-	return ch == '.' || ch == ',' || ch == '_' || ch == ':' || ch == '/' || ch == '?' || ch == '!'
+func (l *Lexer) isPunctuation() bool {
+	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"'
 }
 
-func isContentWhiteSpace(ch byte) bool {
-	return ch == ' '
+func (l *Lexer) isContentWhiteSpace() bool {
+	return l.ch == ' '
 }
 
 func (l *Lexer) readContent() string {
 	pos := l.position
-	for isLetter(l.ch) || isDigit(l.ch) || isPunctuation(l.ch) || isContentWhiteSpace(l.ch) {
+	for l.isPunctuation() || l.isDigit() || l.isLetter() || l.isPunctuation() || l.isContentWhiteSpace() {
 		l.readChar()
 	}
-	return l.input[pos:l.position]
+	return string(l.runes[pos:l.position])
 }
 
-func isToken(ch byte) bool {
-	switch ch {
+func (l *Lexer) isToken() bool {
+	switch l.ch {
 	case '#':
 		return true
 	case '*':
@@ -196,8 +174,6 @@ func isToken(ch byte) bool {
 	case ')':
 		return true
 	case '`':
-		return true
-	case '!':
 		return true
 	case '-':
 		return true
@@ -253,11 +229,73 @@ func (l *Lexer) lexBracketToken() Token {
 	return token
 }
 
+func (l *Lexer) checkPrevTokenForBlock() bool {
+	size := l.getNumberTokens()
+	if size < 1 {
+		return false
+	}
+
+	if l.tokens[size].Type == INLINE_CODE || l.tokens[size].Type == CODE_BLOCK {
+		return true
+	}
+
+	return false
+}
+
+func (l *Lexer) checkForBlockEnd() bool {
+	if l.ch == '`' {
+		return true
+	}
+
+	return false
+}
+
+func (l *Lexer) readBlock() string {
+	pos := l.position
+	for l.checkForBlockEnd() != true {
+		l.readChar()
+	}
+
+	return l.input[pos:l.position]
+}
+
+/* Get the previous Token read */
+func (l *Lexer) getNumberTokens() int {
+	return len(l.tokens)
+}
+
+func (l *Lexer) lexDash () Token {
+	pos := l.position
+	var r []rune
+	var t Token
+	for l.ch  == '-' {
+		l.readChar()
+	}
+	r = l.runes[pos:l.position]
+	if len(r) == 1 {
+		t.Type = BULLET_MINUS
+		t.Literal = string(r)
+	} else if len(r) > 3 {
+		t.Type = HORIZONTAL_RULE
+		t.Literal = string(r)
+	} else {
+		t.Type = INVALID
+		t.Literal = string(r)
+	}
+	return t
+
+}
+
 /* Read the the next token in input */
 func (l *Lexer) NextToken() Token {
 	var token Token
 
-	// TODO: finish implementing state machine lexer
+	if l.checkPrevTokenForBlock() {
+		token.Type = CONTENT
+		token.Literal = l.readBlock()
+		return token
+	}
+
 	switch l.ch {
 
 	case '#':
@@ -279,7 +317,7 @@ func (l *Lexer) NextToken() Token {
 		token.Type = RIGHT_PAREN
 		token.Literal = string(l.ch)
 	case '`':
-		var c []byte
+		var c []rune
 		for l.ch == '`' {
 			c = append(c, l.ch)
 			l.readChar()
@@ -299,7 +337,7 @@ func (l *Lexer) NextToken() Token {
 		token.Type = EXCLAMATION
 		token.Literal = string(l.ch)
 	case '-':
-		token = l.lexHorizontalRule()
+		token = l.lexDash()
 		return token
 	case '+':
 		token.Type = BULLET_PLUS
