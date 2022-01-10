@@ -144,7 +144,7 @@ func (l *Lexer) isDigit() bool {
 
 /* check for allowed punctuation in content block */
 func (l *Lexer) isPunctuation() bool {
-	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"' || l.ch == '>' || l.ch == '<' || l.ch == '(' || l.ch == ')'
+	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"' || l.ch == '>' || l.ch == '<'
 }
 
 func (l *Lexer) isContentWhiteSpace() bool {
