@@ -3,8 +3,8 @@ name: Coverage
 on: [push, pull_request]
 
 jobs:
-  name: Code Coverage Report
   check:
+    name: Code coverage report
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
