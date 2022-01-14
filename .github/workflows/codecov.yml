@@ -1,21 +1,23 @@
-name: Code coverage
-
 on: [push]
 
+name: Coverage
+
 jobs:
-  build:
-  runs-on: ubuntu-latest
-  steps:
-  - uses: actions/checkout@v2
 
-  - name: Set up Go
-    uses: actions/setup-go@v2
-    with:
-        go-version: 1.17
+  check:
+    name: Codecov
+    runs-on: ubuntu-latest
 
-  - name: Run coverage
-    run: go test -race -covermode=atomic -coverprofile=coverage.out ./... 
-  - name: Upload coverage to Codecov
-    uses: codecov/codecoc-action@v1.0.3
-    with:
-        token: $${secrets.CODECOV_TOKEN}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v.1.0.2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
