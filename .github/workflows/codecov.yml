@@ -1,20 +1,21 @@
-name: Coverage
+name: Code coverage
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
-  check:
-    name: Code coverage report
+
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-     - uses: actions/setup-go@v2
-       with:
-         go-version: '1.17'
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+
      - name: Run coverage
-       run: go test -race -covermode=atomic -coverprofile=coverage.out ./...
+       run: go test -race -covermode=atomic -coverprofile=coverage.out ./... 
      - name: Upload coverage to Codecov
        uses: codecov/codecoc-action@v1.0.3
        with:
