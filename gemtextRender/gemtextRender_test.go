@@ -2,8 +2,8 @@ package gemtextRender
 
 import (
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
-	"testing"
 	"os"
+	"testing"
 )
 
 /* Test rendering  header tokens from markdown tokens */
@@ -37,7 +37,7 @@ func TestRenderHeaderTokens(t *testing.T) {
 		t.Errorf("Did not properly render HEADER_TWO token")
 	}
 	tok, _ = g.readToken()
-	if g.renderMdTokenToGemtext(tok) != " "{
+	if g.renderMdTokenToGemtext(tok) != " " {
 		t.Errorf("Could not render whitespace between HEADER_TWO and HEADER_THREE tokens")
 	}
 	tok, err = g.readToken()
@@ -188,7 +188,7 @@ func TestSampleFile(t *testing.T) {
 	}
 }
 
-func TestRenderBulletMinus (t *testing.T) {
+func TestRenderBulletMinus(t *testing.T) {
 	str := "string-with-dashes"
 	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
