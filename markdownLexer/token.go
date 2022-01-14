@@ -50,7 +50,7 @@ const (
 	HORIZONTAL_RULE = "---"
 
 	WHITESPACE = " "
-	CONTENT = "content"
+	CONTENT    = "content"
 
 	INVALID = "INVALID"
 	EOF     = "EOF"

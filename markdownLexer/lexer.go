@@ -134,7 +134,7 @@ func (l *Lexer) lexHeaderToken() Token {
 
 /* check if the character is a letter between A and Z, upper and lower case */
 func (l *Lexer) isLetter() bool {
-	return l.ch >= 'A' && l.ch <= 'Z' ||l.ch >= 'a' && l.ch <= 'z' || l.ch >= 0x7E
+	return l.ch >= 'A' && l.ch <= 'Z' || l.ch >= 'a' && l.ch <= 'z' || l.ch >= 0x7E
 }
 
 /* check if the digit is a ascii number between 0 and 9 */
@@ -144,7 +144,7 @@ func (l *Lexer) isDigit() bool {
 
 /* check for allowed punctuation in content block */
 func (l *Lexer) isPunctuation() bool {
-	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"'
+	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"' || l.ch == '>' || l.ch == '<'
 }
 
 func (l *Lexer) isContentWhiteSpace() bool {
@@ -264,11 +264,11 @@ func (l *Lexer) getNumberTokens() int {
 	return len(l.tokens)
 }
 
-func (l *Lexer) lexDash () Token {
+func (l *Lexer) lexDash() Token {
 	pos := l.position
 	var r []rune
 	var t Token
-	for l.ch  == '-' {
+	for l.ch == '-' {
 		l.readChar()
 	}
 	r = l.runes[pos:l.position]
@@ -345,7 +345,7 @@ func (l *Lexer) NextToken() Token {
 	case '\n':
 		token.Type = NEW_LINE
 		token.Literal = string(l.ch)
-	case ' ' :
+	case ' ':
 		token.Type = WHITESPACE
 		token.Literal = string(l.ch)
 	case 0:

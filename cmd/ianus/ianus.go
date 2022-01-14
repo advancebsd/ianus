@@ -27,8 +27,8 @@ import (
 	"fmt"
 	"os"
 
-	lex "github.com/advancebsd/ianus/markdownLexer"
 	gemtextRender "github.com/advancebsd/ianus/gemtextRender"
+	lex "github.com/advancebsd/ianus/markdownLexer"
 )
 
 func main() {

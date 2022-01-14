@@ -7,8 +7,8 @@ import (
 
 type GemtextRender struct {
 	tokenStream []markdownLexer.Token
-	idx int
-	page string
+	idx         int
+	page        string
 }
 
 /* Initialize the render by setting the token stream and idx to 0 */
@@ -67,12 +67,12 @@ func (g *GemtextRender) peekNextToken() (markdownLexer.Token, error) {
 	return g.tokenStream[g.idx+1], nil
 }
 
-func (g *GemtextRender) hasPrevToken () bool {
+func (g *GemtextRender) hasPrevToken() bool {
 	return g.idx > 0
 }
 
 func (g *GemtextRender) getPrevTokenType() markdownLexer.Token {
-	return g.tokenStream[g.idx-1];
+	return g.tokenStream[g.idx-1]
 }
 
 func (g *GemtextRender) resetTokenRenderForLinks(old_idx int) string {
@@ -94,7 +94,7 @@ func (g *GemtextRender) renderLeftBracket() string {
 	token, _ = g.readToken()
 	g.incrementIndex()
 	switch token.Type {
-	case markdownLexer.LEFT_BRACKET :
+	case markdownLexer.LEFT_BRACKET:
 		token, _ = g.readToken()
 		g.incrementIndex()
 		switch token.Type {
@@ -142,7 +142,7 @@ func (g *GemtextRender) renderLeftBracket() string {
 	}
 
 	if isLink && old_idx > 0 {
-		if g.tokenStream[old_idx - 1].Type != markdownLexer.NEW_LINE {
+		if g.tokenStream[old_idx-1].Type != markdownLexer.NEW_LINE {
 			str = "\n" + str
 		}
 	}
@@ -150,7 +150,7 @@ func (g *GemtextRender) renderLeftBracket() string {
 	return str
 }
 
-func (g *GemtextRender) renderBulletMinus () string {
+func (g *GemtextRender) renderBulletMinus() string {
 	if g.hasPrevToken() {
 		if g.tokenStream[g.idx-1].Type == markdownLexer.NEW_LINE {
 			return "*"
