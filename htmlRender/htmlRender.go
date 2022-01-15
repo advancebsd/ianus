@@ -2,6 +2,7 @@ package htmlRender
 
 import (
 	"errors"
+	"os"
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 )
 
@@ -30,15 +31,42 @@ func (h *HtmlRender) incrementIndex() bool {
 	return true
 }
 
+func (h *HtmlRender) readToken() (markdownLexer.Token, error) {
+	if h.idx >= len(h.tokenStream) {
+		var t markdownLexer.Token
+		t.Type = markdownLexer.INVALID
+		t.Literal = ""
+		return t, errors.New("No more tokens to read")
+	}
+	return h.tokenStream[h.idx], nil
+}
+
+func (h *HtmlRender) RenderDocument() (string, error) {
+	var token markdownLexer.Token
+	var err error
+	token, err = h.readToken()
+	if err != nil {
+		return "", errors.New("No tokens to read")
+	}
+	for token.Type != markdownLexer.EOF {
+		h.page += h.renderMdTokenToHtml(token)
+		token, err = h.readToken()
+		if err != nil {
+			break
+		}
+	}
+	return h.page, nil
+}
+
 // Using the current token, get the opening and closing tags in html
 func (h *HtmlRender) getTags() (string, string, error) {
 	switch h.tokenStream[h.idx].Type {
 	case markdownLexer.HEADER_ONE:
-		return "<h1>", "</h1>", nil
+		return "<h1>", "</h1>\n", nil
 	case markdownLexer.HEADER_TWO:
-		return "<h2>", "</h2>", nil
+		return "<h2>", "</h2>\n", nil
 	case markdownLexer.HEADER_THREE:
-		return "<h3>", "</h3>", nil
+		return "<h3>", "</h3>\n", nil
 	case markdownLexer.INLINE_CODE:
 		return "<code>", "</code>", nil
 	case markdownLexer.CODE_BLOCK:
@@ -66,12 +94,16 @@ func (h *HtmlRender) handleHeaderTokens() (string, error) {
 	var endHeader string
 	var err error
 	str, endHeader, err = h.getTags()
+	h.incrementIndex()
+	if h.tokenStream[h.idx].Type == markdownLexer.WHITESPACE {
+		h.incrementIndex()
+	}
 	if err != nil {
 		return "", errors.New("Issue with getting the closing tag for a given token")
 	}
-	for h.incrementIndex() {
+	for { 
 		currStr := h.renderMdTokenToHtml(h.tokenStream[h.idx])
-		if currStr == markdownLexer.NEW_LINE {
+ 		if currStr == markdownLexer.NEW_LINE {
 			str = str + endHeader
 			return str, nil
 		} else if currStr == markdownLexer.EOF {
@@ -91,8 +123,10 @@ func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
 	case markdownLexer.HEADER_ONE:
 		str, err = h.handleHeaderTokens()
 		if err != nil {
-			// handle some error here
+			panic("Document ended before terminating a header")
+			os.Exit(1)
 		}
+		return str
 	case markdownLexer.HEADER_TWO:
 		str, err = h.handleHeaderTokens()
 		if err != nil {
@@ -108,7 +142,9 @@ func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
 	case markdownLexer.WHITESPACE:
 		str = " "
 	case markdownLexer.CONTENT:
-		str = "<p>" + t.Literal + "</p>"
+		str = t.Literal
+	case markdownLexer.EOF:
+		str = ""
 	}
 
 	h.incrementIndex()
