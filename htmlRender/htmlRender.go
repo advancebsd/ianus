@@ -5,6 +5,10 @@ import (
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 )
 
+// TODO: Implement rest of render
+// TODO: Test render
+// TODO: Write test cases for render
+
 type HtmlRender struct {
 	tokenStream []markdownLexer.Token
 	idx         int
