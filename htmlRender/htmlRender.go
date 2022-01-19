@@ -62,11 +62,11 @@ func (h *HtmlRender) RenderDocument() (string, error) {
 func (h *HtmlRender) getTags() (string, string, error) {
 	switch h.tokenStream[h.idx].Type {
 	case markdownLexer.HEADER_ONE:
-		return "<h1>", "</h1>\n", nil
+		return "<h1>", "</h1>", nil
 	case markdownLexer.HEADER_TWO:
-		return "<h2>", "</h2>\n", nil
+		return "<h2>", "</h2>", nil
 	case markdownLexer.HEADER_THREE:
-		return "<h3>", "</h3>\n", nil
+		return "<h3>", "</h3>", nil
 	case markdownLexer.INLINE_CODE:
 		return "<code>", "</code>", nil
 	case markdownLexer.CODE_BLOCK:
@@ -104,7 +104,7 @@ func (h *HtmlRender) handleHeaderTokens() (string, error) {
 	for { 
 		currStr := h.renderMdTokenToHtml(h.tokenStream[h.idx])
  		if currStr == markdownLexer.NEW_LINE {
-			str = str + endHeader
+			str = str + endHeader + "\n"
 			return str, nil
 		} else if currStr == markdownLexer.EOF {
 			return "", errors.New("Header did not terminate before end of file")
