@@ -179,6 +179,10 @@ func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
 		str = h.handleEmphasis()
 	case markdownLexer.BOLD_ITALIC:
 		str = h.handleEmphasis()
+	case markdownLexer.INLINE_CODE:
+		str = h.handleEmphasis()
+	case markdownLexer.CODE_BLOCK:
+		str = h.handleEmphasis()
 	}
 
 	h.incrementIndex()
