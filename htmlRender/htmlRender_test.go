@@ -1,6 +1,7 @@
 package htmlRender
 
 import (
+	"fmt"
 	"testing"
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 )
@@ -87,5 +88,68 @@ func TestH3Rendering (t *testing.T) {
 	expected = "<h3>Hello world</h3>\n"
 	if result != expected {
 		t.Errorf("Issue with rendering header token.\nExpected: %s\nActual: %s", expected, result)
+	}
+}
+
+func TestBoldEmphasis(t *testing.T) {
+	str := "**helloworld**"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var tokens []markdownLexer.Token
+	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
+		tokens = append(tokens, token)
+	}
+	fmt.Println(tokens)
+	var h HtmlRender
+	h.InitializeHtmlRender(tokens)
+	result, err := h.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue rendering document for bold case")
+	}
+	expected := "<b>helloworld</b>"
+	if result != expected {
+		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
+	}
+}
+
+func TestItalicEmphasis(t *testing.T) {
+	str := "*helloworld*"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var tokens []markdownLexer.Token
+	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
+		tokens = append(tokens, token)
+	}
+	fmt.Println(tokens)
+	var h HtmlRender
+	h.InitializeHtmlRender(tokens)
+	result, err := h.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue rendering document for bold case")
+	}
+	expected := "<i>helloworld</i>"
+	if result != expected {
+		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
+	}
+}
+
+func TestBoldItalicEmphasis(t *testing.T) {
+	str := "***helloworld***"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var tokens []markdownLexer.Token
+	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
+		tokens = append(tokens, token)
+	}
+	fmt.Println(tokens)
+	var h HtmlRender
+	h.InitializeHtmlRender(tokens)
+	result, err := h.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue rendering document for bold case")
+	}
+	expected := "<b><i>helloworld</b></i>"
+	if result != expected {
+		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
 	}
 }
