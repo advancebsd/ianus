@@ -2,11 +2,11 @@ package htmlRender
 
 import (
 	"fmt"
-	"testing"
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
+	"testing"
 )
 
-func TestH1Rendering (t *testing.T) {
+func TestH1Rendering(t *testing.T) {
 	var str string
 	var l markdownLexer.Lexer
 	var token markdownLexer.Token
@@ -34,8 +34,7 @@ func TestH1Rendering (t *testing.T) {
 	}
 }
 
-
-func TestH2Rendering (t *testing.T) {
+func TestH2Rendering(t *testing.T) {
 	var str string
 	var l markdownLexer.Lexer
 	var token markdownLexer.Token
@@ -63,7 +62,7 @@ func TestH2Rendering (t *testing.T) {
 	}
 }
 
-func TestH3Rendering (t *testing.T) {
+func TestH3Rendering(t *testing.T) {
 	var str string
 	var l markdownLexer.Lexer
 	var token markdownLexer.Token
@@ -217,7 +216,7 @@ func TestCodeBlock(t *testing.T) {
 	}
 }
 
-func TestQuote (t *testing.T) {
+func TestQuote(t *testing.T) {
 	str := "> This is a quote\n"
 	var l markdownLexer.Lexer
 	l.InitializeLexer(str)

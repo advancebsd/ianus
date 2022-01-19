@@ -2,8 +2,8 @@ package htmlRender
 
 import (
 	"errors"
-	"os"
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
+	"os"
 )
 
 // TODO: Implement rest of render
@@ -101,9 +101,9 @@ func (h *HtmlRender) handleHeaderTokens() (string, error) {
 	if err != nil {
 		return "", errors.New("Issue with getting the closing tag for a given token")
 	}
-	for { 
+	for {
 		currStr := h.renderMdTokenToHtml(h.tokenStream[h.idx])
- 		if currStr == markdownLexer.NEW_LINE {
+		if currStr == markdownLexer.NEW_LINE {
 			str = str + endHeader + "\n"
 			return str, nil
 		} else if currStr == markdownLexer.EOF {
@@ -127,7 +127,7 @@ func (h *HtmlRender) handleEmphasis() string {
 	}
 
 	h.incrementIndex()
-	for token, err := h.readToken(); token.Type != tag; token, err = h.readToken()  {
+	for token, err := h.readToken(); token.Type != tag; token, err = h.readToken() {
 		str = str + h.renderMdTokenToHtml(token)
 		if err != nil {
 			panic("Reached a token that is not recognized")
