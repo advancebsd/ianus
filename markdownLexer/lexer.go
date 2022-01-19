@@ -348,6 +348,9 @@ func (l *Lexer) NextToken() Token {
 	case ' ':
 		token.Type = WHITESPACE
 		token.Literal = string(l.ch)
+	case '>':
+		token.Type = QUOTE
+		token.Literal = string(l.ch)
 	case 0:
 		token.Type = EOF
 		token.Literal = ""
