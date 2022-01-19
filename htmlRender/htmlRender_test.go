@@ -154,6 +154,27 @@ func TestBoldItalicEmphasis(t *testing.T) {
 	}
 }
 
+func TestBoldAndItalicSeperate(t *testing.T) {
+	str := "**In this sentence, *this* is italic**"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var tokens []markdownLexer.Token
+	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
+		tokens = append(tokens, token)
+	}
+	fmt.Println(tokens)
+	var h HtmlRender
+	h.InitializeHtmlRender(tokens)
+	result, err := h.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue rendering document for bold italic case")
+	}
+	expected := "<b>In this sentence, <i>this</i> is italic</b>"
+	if result != expected {
+		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
+	}
+}
+
 func TestInLineCode(t *testing.T) {
 	str := "`helloworld`"
 	var l markdownLexer.Lexer
