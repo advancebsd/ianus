@@ -125,7 +125,7 @@ func TestItalicEmphasis(t *testing.T) {
 	h.InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
-		t.Errorf("Issue rendering document for bold case")
+		t.Errorf("Issue rendering document for italic case")
 	}
 	expected := "<i>helloworld</i>"
 	if result != expected {
@@ -146,10 +146,56 @@ func TestBoldItalicEmphasis(t *testing.T) {
 	h.InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
-		t.Errorf("Issue rendering document for bold case")
+		t.Errorf("Issue rendering document for bold italic case")
 	}
 	expected := "<b><i>helloworld</b></i>"
 	if result != expected {
 		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
 	}
+}
+
+func TestInLineCode(t *testing.T) {
+	str := "`helloworld`"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var tokens []markdownLexer.Token
+	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
+		tokens = append(tokens, token)
+	}
+	fmt.Println(tokens)
+	var h HtmlRender
+	h.InitializeHtmlRender(tokens)
+	result, err := h.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue rendering document for in_line code case")
+	}
+	expected := "<code>helloworld</code>"
+	if result != expected {
+		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
+	}
+}
+
+func TestCodeBlock(t *testing.T) {
+	str := "```helloworld```"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var tokens []markdownLexer.Token
+	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
+		tokens = append(tokens, token)
+	}
+	fmt.Println(tokens)
+	var h HtmlRender
+	h.InitializeHtmlRender(tokens)
+	result, err := h.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue rendering document for bold case")
+	}
+	expected := "<code>helloworld</code>"
+	if result != expected {
+		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
+	}
+}
+
+func TestQuote (t *testing.T) {
+
 }
