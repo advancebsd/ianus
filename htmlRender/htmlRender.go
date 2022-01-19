@@ -135,7 +135,6 @@ func (h *HtmlRender) handleEmphasis() string {
 		}
 	}
 
-	h.incrementIndex()
 	str = str + end_tag
 
 	return str
