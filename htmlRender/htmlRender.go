@@ -141,6 +141,29 @@ func (h *HtmlRender) handleEmphasis() string {
 
 }
 
+func (h *HtmlRender) handleQuote() string {
+	var str string
+	var err error
+	var end_tag string
+	str, end_tag, err = h.getTags()
+	if err != nil {
+		panic("Tag not recognized")
+		os.Exit(1)
+	}
+
+	h.incrementIndex()
+	h.incrementIndex() // skipe whitespace
+	for token, err := h.readToken(); token.Type != markdownLexer.NEW_LINE; token, err = h.readToken() {
+		str = str + h.renderMdTokenToHtml(token)
+		if err != nil {
+			panic("Read a token that is not recognized")
+			os.Exit(1)
+		}
+	}
+
+	return str + end_tag + "\n"
+}
+
 // TODO: Write out the render to handle cases
 // Render the token stream from lexing markdown to HTML text
 func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
@@ -182,6 +205,8 @@ func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
 		str = h.handleEmphasis()
 	case markdownLexer.CODE_BLOCK:
 		str = h.handleEmphasis()
+	case markdownLexer.QUOTE:
+		str = h.handleQuote()
 	}
 
 	h.incrementIndex()
