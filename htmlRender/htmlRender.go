@@ -141,6 +141,7 @@ func (h *HtmlRender) handleEmphasis() string {
 
 }
 
+// TODO: Rename as it works for unordered lists
 func (h *HtmlRender) handleQuote() string {
 	var str string
 	var err error
@@ -206,6 +207,10 @@ func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
 	case markdownLexer.CODE_BLOCK:
 		str = h.handleEmphasis()
 	case markdownLexer.QUOTE:
+		str = h.handleQuote()
+	case markdownLexer.BULLET_MINUS:
+		str = h.handleQuote()
+	case markdownLexer.BULLET_PLUS:
 		str = h.handleQuote()
 	}
 
