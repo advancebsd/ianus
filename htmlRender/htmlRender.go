@@ -220,9 +220,11 @@ func (h *HtmlRender) handleLeftBracket() string {
 		return createHtmlLink(link, linkText)
 	}
 
+	for _, t := range tokens {
+		str = str + t.Literal
+	}
 
-
-	return str
+	return "["
 }
 
 // TODO: Write out the render to handle cases
@@ -280,6 +282,12 @@ func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
 		str = "("
 	case markdownLexer.LEFT_PAREN:
 		str = ")"
+	case markdownLexer.HORIZONTAL_RULE:
+		str = "<hr>"
+	case markdownLexer.CHECKED:
+		str = "<input type=\"checkbox\" checked>"
+	case markdownLexer.UNCHECKED:
+		str = "<input type=\"checkbox\" >"
 	}
 
 	h.incrementIndex()
