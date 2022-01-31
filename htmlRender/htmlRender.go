@@ -165,6 +165,66 @@ func (h *HtmlRender) handleQuote() string {
 	return str + end_tag + "\n"
 }
 
+func extractLink(tokens []markdownLexer.Token) string {
+	var str string
+	for _, token := range tokens {
+		if token.Type != markdownLexer.RIGHT_PAREN && token.Type != markdownLexer.LEFT_PAREN {
+			str = str + token.Literal
+		}
+	}
+	return str
+}
+
+func extractLinkText(tokens []markdownLexer.Token) string {
+	var str string
+	for _, token := range tokens {
+		if token.Type != markdownLexer.LEFT_BRACKET && token.Type != markdownLexer.RIGHT_BRACKET {
+			str = str + token.Literal
+		}
+	}
+	return str
+}
+
+func createHtmlLink(link string, linkText string) string {
+	return "<a href=\"" + link + "\">" + linkText + "</a>"
+}
+
+func (h *HtmlRender) handleLeftBracket() string {
+	var str string
+	// oldIdx := h.idx;
+	var tokens []markdownLexer.Token
+	for {
+		token := h.tokenStream[h.idx]
+		tokens = append(tokens, token)
+		if token.Type == markdownLexer.RIGHT_BRACKET {
+			h.incrementIndex()
+			break;
+		}
+		h.incrementIndex()
+	}
+
+
+	if h.tokenStream[h.idx].Type == markdownLexer.LEFT_PAREN {
+		linkText := extractLinkText(tokens)
+		var linkTokens []markdownLexer.Token
+		for {
+			token := h.tokenStream[h.idx]
+			linkTokens = append(linkTokens, token)
+			if token.Type == markdownLexer.RIGHT_PAREN {
+				h.incrementIndex()
+				break
+			}
+			h.incrementIndex()
+		}
+		link := extractLink(linkTokens)
+		return createHtmlLink(link, linkText)
+	}
+
+
+
+	return str
+}
+
 // TODO: Write out the render to handle cases
 // Render the token stream from lexing markdown to HTML text
 func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
@@ -212,6 +272,14 @@ func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
 		str = h.handleQuote()
 	case markdownLexer.BULLET_PLUS:
 		str = h.handleQuote()
+	case markdownLexer.RIGHT_BRACKET:
+		str = "]"
+	case markdownLexer.LEFT_BRACKET:
+		str = h.handleLeftBracket()
+	case markdownLexer.RIGHT_PAREN:
+		str = "("
+	case markdownLexer.LEFT_PAREN:
+		str = ")"
 	}
 
 	h.incrementIndex()
