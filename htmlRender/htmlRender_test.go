@@ -279,7 +279,7 @@ func TestUnorderedList(t *testing.T) {
 	}
 }
 
-func TestLink (t *testing.T) {
+func TestLink(t *testing.T) {
 	str := "[NetBSD](http://netbsd.org)"
 	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
@@ -299,7 +299,7 @@ func TestLink (t *testing.T) {
 	}
 }
 
-func TestCheckBoxChecked (t *testing.T) {
+func TestCheckBoxChecked(t *testing.T) {
 	str := "[x]"
 	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
@@ -325,7 +325,7 @@ func TestCheckBoxChecked (t *testing.T) {
 	}
 }
 
-func TestUnCheckBoxChecked (t *testing.T) {
+func TestUnCheckBoxChecked(t *testing.T) {
 	str := "[ ]"
 	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
@@ -338,7 +338,6 @@ func TestUnCheckBoxChecked (t *testing.T) {
 			break
 		}
 	}
-	fmt.Println(tokens)
 	var h HtmlRender
 	h.InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
@@ -348,5 +347,30 @@ func TestUnCheckBoxChecked (t *testing.T) {
 	expected := "<input type=\"checkbox\" >"
 	if result != expected {
 		t.Errorf("Fail to render checked checkbox\nExpected %s\nActual: %s\n", expected, result)
+	}
+}
+
+func TestHorizontalLineRule(t *testing.T) {
+	str := "---"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var tokens []markdownLexer.Token
+	var token markdownLexer.Token
+	for {
+		token = l.NextToken()
+		tokens = append(tokens, token)
+		if token.Type == markdownLexer.EOF {
+			break
+		}
+	}
+	var h HtmlRender
+	h.InitializeHtmlRender(tokens)
+	result, err := h.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue rendering tokens for horizonatal rule test")
+	}
+	expected := "<hr>"
+	if result != expected {
+		t.Errorf("Failed to render horizontal rule\nExpected: %s\nActual:%s\n", expected, result)
 	}
 }

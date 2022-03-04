@@ -275,7 +275,7 @@ func (l *Lexer) lexDash() Token {
 	if len(r) == 1 {
 		t.Type = BULLET_MINUS
 		t.Literal = string(r)
-	} else if len(r) > 3 {
+	} else if len(r) >= 3 {
 		t.Type = HORIZONTAL_RULE
 		t.Literal = string(r)
 	} else {
