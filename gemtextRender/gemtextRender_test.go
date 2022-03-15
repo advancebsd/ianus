@@ -213,3 +213,26 @@ func TestRenderBulletMinus(t *testing.T) {
 		t.Errorf("Expected and result do not match. Expected: %s, Result: %s", expected, result)
 	}
 }
+
+func TestSemicolon(t *testing.T) {
+	str := "testing-string;"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var token markdownLexer.Token
+	var tokens []markdownLexer.Token
+	token = l.NextToken()
+	for token.Type != markdownLexer.EOF {
+		tokens = append(tokens, token)
+		token = l.NextToken()
+	}
+	var g GemtextRender
+	g.InitializeGemtextRender(tokens)
+	result, err := g.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue with rendering document from test string")
+	}
+	expected := "testing-string;"
+	if expected != result {
+		t.Errorf("Expected and result do not match.\nExpected: %s\nResult: %s", expected, result)
+	}
+}

@@ -355,3 +355,25 @@ func TestUnicodeCharacters(t *testing.T) {
 		t.Errorf("Did not catpure the literal of token correctly")
 	}
 }
+
+func TestSemicolon(t *testing.T) {
+	str := ";"
+	var lex Lexer
+	lex.InitializeLexer(str)
+	var tokens []Token
+	var token Token
+	token = lex.NextToken()
+	for token.Type != EOF {
+		tokens = append(tokens, token)
+		token = lex.NextToken()
+	}
+	if len(tokens) != 1 {
+		t.Errorf("Issue with getting the proper number of tokens.")
+	}
+	if tokens[0].Type != CONTENT {
+		t.Errorf("Token for test case was not read as a token content type")
+	}
+	if tokens[0].Literal != ";" {
+		t.Errorf("Expected token literal to to be ';'")
+	}
+}
