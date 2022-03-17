@@ -147,18 +147,24 @@ func (l *Lexer) isPunctuation() bool {
 	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"' || l.ch == '>' || l.ch == '<' || l.ch == ';'
 }
 
+/* Checks if the current character is white space */
 func (l *Lexer) isContentWhiteSpace() bool {
 	return l.ch == ' '
 }
 
+/* Continuously read so long as markdown tokens are not read in */
 func (l *Lexer) readContent() string {
 	pos := l.position
 	for l.isPunctuation() || l.isDigit() || l.isLetter() || l.isPunctuation() || l.isContentWhiteSpace() {
 		l.readChar()
 	}
+	// for l.IsToken(l.runes[l.position]) == false {
+	// 	l.readChar()
+	// }
 	return string(l.runes[pos:l.position])
 }
 
+/* Check is rune read is one of the markdown tokens */
 func (l *Lexer) IsToken(ch rune) bool {
 	switch ch {
 	case '#':
