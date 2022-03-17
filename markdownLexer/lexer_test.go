@@ -377,3 +377,14 @@ func TestSemicolon(t *testing.T) {
 		t.Errorf("Expected token literal to to be ';'")
 	}
 }
+
+func TestIsToken(t *testing.T) {
+	var lex Lexer
+	bytes := []rune("{(]};+-`*j1")
+	var expected [11]bool = [11]bool{false, true, true, false, false, true, true, true, true, false, false}
+	for i := 0;  i < 11; i++ {
+		if lex.IsToken(bytes[i]) != expected[i] {
+			t.Errorf("Rune not recognized as individual token properly.\nRune: %c\nExpected: %t", bytes[i], expected[i])
+		}
+	}
+}
