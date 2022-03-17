@@ -159,8 +159,8 @@ func (l *Lexer) readContent() string {
 	return string(l.runes[pos:l.position])
 }
 
-func (l *Lexer) isToken() bool {
-	switch l.ch {
+func (l *Lexer) IsToken(ch rune) bool {
+	switch ch {
 	case '#':
 		return true
 	case '*':
