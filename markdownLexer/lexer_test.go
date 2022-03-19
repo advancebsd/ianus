@@ -94,6 +94,54 @@ func TestEmphasisTokens(t *testing.T) {
 	}
 }
 
+/* Test for emphasis tokens using underscore */
+func TestingUnderscoreEmphasisTokens(t *testing.T) {
+	headerOne := "_"
+	headerTwo := "__"
+	headerThree := "___"
+
+	var tok Token
+	l := new(Lexer)
+
+	l.InitializeLexer(headerOne)
+	tok = l.NextToken()
+	if tok.Type != ITALIC {
+		t.Errorf("\nHeader token '#' not read properly")
+	}
+	l.InitializeLexer(headerTwo)
+	tok = l.NextToken()
+	if tok.Type != BOLD {
+		t.Errorf("\nHeader token '##' not properly read")
+	}
+	l.InitializeLexer(headerThree)
+	tok = l.NextToken()
+	if tok.Type != BOLD_ITALIC {
+		t.Errorf("\nHeader token '###' not properly read %s\n", tok.Type)
+	}
+}
+
+/* Test underscore emphasis tokens with words */
+func TestingUnderScoreEmphasisWords(t *testing.T) {
+	str := "_one_"
+
+	var tok Token
+	var l Lexer
+	l.InitializeLexer(str)
+
+	tok = l.NextToken()
+	if tok.Type != ITALIC {
+		t.Errorf("Received: %s\nExpected: %s", tok.Type, ITALIC)
+	}
+	tok = l.NextToken()
+	if tok.Type != CONTENT {
+		t.Errorf("Received: %s\nExpected: %s", tok.Type, CONTENT)
+	}
+	tok = l.NextToken()
+	if tok.Type != ITALIC {
+		t.Errorf("Received: %s\nExpected: %s", tok.Type, ITALIC)
+	}
+}
+
 /* Testing single character tokens */
 func TestSingleCharTokenLexer(t *testing.T) {
 	testString := "[]()!` ```"

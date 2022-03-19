@@ -92,13 +92,13 @@ func (l *Lexer) lexEmphasisToken() Token {
 
 	str := l.getRepeatCharToken(l.ch)
 
-	if str == "*" {
+	if str == "*" || str == "_" {
 		t.Type = ITALIC
 		t.Literal = str
-	} else if str == "**" {
+	} else if str == "**" || str == "__" {
 		t.Type = BOLD
 		t.Literal = str
-	} else if str == "***" {
+	} else if str == "***" || str == "___" {
 		t.Type = BOLD_ITALIC
 		t.Literal = str
 	} else {
@@ -306,6 +306,9 @@ func (l *Lexer) NextToken() Token {
 
 	case '#':
 		token = l.lexHeaderToken()
+		return token
+	case '_':
+		token = l.lexEmphasisToken()
 		return token
 	case '*':
 		token = l.lexEmphasisToken()
