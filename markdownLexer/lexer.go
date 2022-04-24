@@ -86,9 +86,31 @@ func (l *Lexer) getRepeatCharToken(ch rune) string {
 	return string(l.runes[pos:l.position])
 }
 
+/* Check for italic token or bullet token */
+func (l *Lexer) checkIfBulletOrItalic() string {
+	curr := l.position
+	if len(l.runes) <= 2 {
+		return ITALIC
+	}
+	curr++;
+	for l.runes[curr] != l.ch && curr < len(l.runes) {
+		if l.runes[curr] == '\n' {
+			return NEW_LINE
+		}
+		curr++;
+	}
+	return ITALIC
+}
+
 /* Lex the type of emphasis toke */
 func (l *Lexer) lexEmphasisToken() Token {
 	var t Token
+
+	// if l.checkIfBulletOrItalic() == NEW_LINE {
+	// 	t.Type = BULLET_MINUS
+	// 	t.Literal = "+"
+	// 	return t
+	// }
 
 	str := l.getRepeatCharToken(l.ch)
 
@@ -144,7 +166,7 @@ func (l *Lexer) isDigit() bool {
 
 /* check for allowed punctuation in content block */
 func (l *Lexer) isPunctuation() bool {
-	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"' || l.ch == '>' || l.ch == '<' || l.ch == ';' || l.ch == '%'
+	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"' || l.ch == '>' || l.ch == '<' || l.ch == ';' || l.ch == '%' || l.ch == '$' || l.ch == '=' || l.ch == '{' || l.ch == '}'
 }
 
 /* Checks if the current character is white space */

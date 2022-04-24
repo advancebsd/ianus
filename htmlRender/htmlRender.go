@@ -279,9 +279,9 @@ func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
 	case markdownLexer.LEFT_BRACKET:
 		str = h.handleLeftBracket()
 	case markdownLexer.RIGHT_PAREN:
-		str = "("
-	case markdownLexer.LEFT_PAREN:
 		str = ")"
+	case markdownLexer.LEFT_PAREN:
+		str = "("
 	case markdownLexer.HORIZONTAL_RULE:
 		str = "<hr>"
 	case markdownLexer.CHECKED:

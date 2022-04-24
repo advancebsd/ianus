@@ -70,8 +70,8 @@ func TestHeaderTokens(t *testing.T) {
 
 /* Test for emphasis tokens */
 func TestEmphasisTokens(t *testing.T) {
-	headerOne := "*"
-	headerTwo := "**"
+	headerOne := "*\n"
+	headerTwo := "**\n"
 	headerThree := "***"
 
 	var tok Token
