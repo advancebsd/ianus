@@ -194,7 +194,7 @@ func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	case markdownLexer.LEFT_PAREN:
 		str = t.Literal
 	case markdownLexer.ITALIC:
-		str = ""
+		str = t.Literal
 	case markdownLexer.BOLD:
 		str = ""
 	case markdownLexer.BOLD_ITALIC:
