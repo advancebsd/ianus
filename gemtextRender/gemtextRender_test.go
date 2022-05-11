@@ -1,9 +1,10 @@
 package gemtextRender
 
 import (
-	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 	"os"
 	"testing"
+
+	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 )
 
 /* Test rendering  header tokens from markdown tokens */
@@ -95,7 +96,7 @@ func TestRenderOnString(t *testing.T) {
 	if err != nil {
 		t.Errorf("Not properly reading tokens from lexer")
 	}
-	expected := "# HeaderOne\nSomeInformation about test\n HelloWorld"
+	expected := "# HeaderOne\nSomeInformation about test\n *HelloWorld"
 	if result != expected {
 		t.Errorf("Did no properly render to gemtext the test string")
 	}

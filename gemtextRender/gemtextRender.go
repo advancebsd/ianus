@@ -2,6 +2,7 @@ package gemtextRender
 
 import (
 	"errors"
+
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 )
 
@@ -161,6 +162,16 @@ func (g *GemtextRender) renderBulletMinus() string {
 	return "-"
 }
 
+func (g *GemtextRender) renderAsterick() string {
+	if g.tokenStream[g.idx-1].Type == markdownLexer.NEW_LINE {
+		return g.tokenStream[g.idx].Literal
+	}
+	if g.tokenStream[g.idx-1].Type == markdownLexer.WHITESPACE {
+		return g.tokenStream[g.idx].Literal
+	}
+	return ""
+}
+
 /* Takes a token and renders that token to gemtext */
 func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	var str string
@@ -194,7 +205,7 @@ func (g *GemtextRender) renderMdTokenToGemtext(t markdownLexer.Token) string {
 	case markdownLexer.LEFT_PAREN:
 		str = t.Literal
 	case markdownLexer.ITALIC:
-		str = t.Literal
+		str = g.renderAsterick()
 	case markdownLexer.BOLD:
 		str = ""
 	case markdownLexer.BOLD_ITALIC:
