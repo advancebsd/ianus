@@ -16,6 +16,6 @@ How about, a sentence with commas?
 
 * another unordered list token
 
-italic
+*italic
 bold
 bold italic
