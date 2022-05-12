@@ -96,9 +96,9 @@ func TestRenderOnString(t *testing.T) {
 	if err != nil {
 		t.Errorf("Not properly reading tokens from lexer")
 	}
-	expected := "# HeaderOne\nSomeInformation about test\n *HelloWorld"
+	expected := "# HeaderOne\nSomeInformation about test\n HelloWorld"
 	if result != expected {
-		t.Errorf("Did no properly render to gemtext the test string")
+		t.Errorf("Did no properly render to gemtext the test string.\n\tExpected: %s\n\tActual: %s", expected, result)
 	}
 }
 
@@ -233,6 +233,29 @@ func TestSemicolon(t *testing.T) {
 		t.Errorf("Issue with rendering document from test string")
 	}
 	expected := "testing-string;"
+	if expected != result {
+		t.Errorf("Expected and result do not match.\nExpected: %s\nResult: %s", expected, result)
+	}
+}
+
+func TestAsterickRenderAsBullet(t *testing.T) {
+	str := "Hello World\n* Hello"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var token markdownLexer.Token
+	var tokens []markdownLexer.Token
+	token = l.NextToken()
+	for token.Type != markdownLexer.EOF {
+		tokens = append(tokens, token)
+		token = l.NextToken()
+	}
+	var g GemtextRender
+	g.InitializeGemtextRender(tokens)
+	result, err := g.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue with rendering document from test string")
+	}
+	expected := "Hello World\n* Hello"
 	if expected != result {
 		t.Errorf("Expected and result do not match.\nExpected: %s\nResult: %s", expected, result)
 	}

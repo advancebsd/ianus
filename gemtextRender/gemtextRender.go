@@ -27,13 +27,20 @@ func (g *GemtextRender) incrementIndex() bool {
 	return true
 }
 
+func (g *GemtextRender) previousToken() markdownLexer.Token {
+	if g.idx > 0 {
+		return g.tokenStream[g.idx-1]
+	}
+	return markdownLexer.Token{Type: markdownLexer.EMPTY, Literal: ""}
+}
+
 /* Read the token currently pointed to by GemtextRender's index */
 func (g *GemtextRender) readToken() (markdownLexer.Token, error) {
 	if g.idx >= len(g.tokenStream) {
 		var t markdownLexer.Token
 		t.Type = markdownLexer.INVALID
 		t.Literal = ""
-		return t, errors.New("No more tokens to read")
+		return t, errors.New("no more tokens to read")
 	}
 	return g.tokenStream[g.idx], nil
 }
@@ -45,7 +52,7 @@ func (g *GemtextRender) RenderDocument() (string, error) {
 	var err error
 	curr_token, err = g.readToken()
 	if err != nil {
-		return "", errors.New("No tokens to read")
+		return "", errors.New("no tokens to read")
 	}
 	for curr_token.Type != markdownLexer.EOF {
 		gemtext += g.renderMdTokenToGemtext(curr_token)
@@ -63,7 +70,7 @@ func (g *GemtextRender) peekNextToken() (markdownLexer.Token, error) {
 		var t markdownLexer.Token
 		t.Type = markdownLexer.INVALID
 		t.Literal = ""
-		return t, errors.New("End of token stream")
+		return t, errors.New("end of token stream")
 	}
 	return g.tokenStream[g.idx+1], nil
 }
@@ -163,11 +170,8 @@ func (g *GemtextRender) renderBulletMinus() string {
 }
 
 func (g *GemtextRender) renderAsterick() string {
-	if g.tokenStream[g.idx-1].Type == markdownLexer.NEW_LINE {
-		return g.tokenStream[g.idx].Literal
-	}
-	if g.tokenStream[g.idx-1].Type == markdownLexer.WHITESPACE {
-		return g.tokenStream[g.idx].Literal
+	if g.getPrevTokenType().Type == markdownLexer.NEW_LINE {
+		return "*"
 	}
 	return ""
 }
