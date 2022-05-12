@@ -430,7 +430,7 @@ func TestIsToken(t *testing.T) {
 	var lex Lexer
 	bytes := []rune("{(]};+-`*j\n1")
 	var expected [12]bool = [12]bool{false, true, true, false, false, true, true, true, true, false, true, false}
-	for i := 0;  i < 12; i++ {
+	for i := 0; i < 12; i++ {
 		if lex.IsToken(bytes[i]) != expected[i] {
 			t.Errorf("Rune not recognized as individual token properly.\nRune: %c\nExpected: %t", bytes[i], expected[i])
 		}

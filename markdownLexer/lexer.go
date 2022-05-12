@@ -92,12 +92,12 @@ func (l *Lexer) checkIfBulletOrItalic() string {
 	if len(l.runes) <= 2 {
 		return ITALIC
 	}
-	curr++;
+	curr++
 	for l.runes[curr] != l.ch && curr < len(l.runes) {
 		if l.runes[curr] == '\n' {
 			return NEW_LINE
 		}
-		curr++;
+		curr++
 	}
 	return ITALIC
 }
