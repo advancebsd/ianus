@@ -52,6 +52,8 @@ const (
 	WHITESPACE = " "
 	CONTENT    = "content"
 
+	EMPTY = "EMPTY"
+
 	INVALID = "INVALID"
 	EOF     = "EOF"
 )
