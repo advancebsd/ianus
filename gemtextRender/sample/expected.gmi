@@ -15,7 +15,8 @@ How about, a sentence with commas?
 => http://google.com this is a link
 
 * another unordered list token
+* bullet point with asterick
 
-*italic
+italic
 bold
 bold italic

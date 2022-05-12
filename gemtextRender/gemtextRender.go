@@ -171,7 +171,21 @@ func (g *GemtextRender) renderBulletMinus() string {
 
 func (g *GemtextRender) renderAsterick() string {
 	if g.getPrevTokenType().Type == markdownLexer.NEW_LINE {
-		return "*"
+		for i := g.idx + 1; i < len(g.tokenStream); i++ {
+			curType := g.tokenStream[i].Type
+			if curType == markdownLexer.ITALIC {
+				return ""
+			}
+			if curType == markdownLexer.NEW_LINE {
+				return "*"
+			}
+			if curType == markdownLexer.EOF {
+				return "*"
+			}
+			if i == len(g.tokenStream)-1 {
+				return "*"
+			}
+		}
 	}
 	return ""
 }
