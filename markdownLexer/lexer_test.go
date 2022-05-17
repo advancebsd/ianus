@@ -3,6 +3,7 @@ package markdownLexer
 import (
 	"os"
 	"testing"
+	// "fmt"
 )
 
 func TestInitializerLexer(t *testing.T) {
