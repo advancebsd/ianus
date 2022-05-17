@@ -164,6 +164,10 @@ func (l *Lexer) isDigit() bool {
 	return l.ch >= '0' && l.ch <= '9'
 }
 
+func (l *Lexer) isToken() bool {
+	return l.ch == '#' || l.ch == '*' || l.ch == '[' || l.ch == ']' || l.ch == '(' || l.ch == ')' || l.ch == '+' || l.ch == '-' || l.ch == '>' || l.ch == '`'
+}
+
 /* check for allowed punctuation in content block */
 func (l *Lexer) isPunctuation() bool {
 	return l.ch == '.' || l.ch == ',' || l.ch == '_' || l.ch == ':' || l.ch == '/' || l.ch == '?' || l.ch == '!' || l.ch == '\'' || l.ch == '"' || l.ch == '>' || l.ch == '<' || l.ch == ';' || l.ch == '%' || l.ch == '$' || l.ch == '=' || l.ch == '{' || l.ch == '}' || l.ch == '-' || l.ch == '\\'
@@ -177,7 +181,10 @@ func (l *Lexer) isContentWhiteSpace() bool {
 /* Continuously read so long as markdown tokens are not read in */
 func (l *Lexer) readContent() string {
 	pos := l.position
-	for l.isPunctuation() || l.isDigit() || l.isLetter() || l.isPunctuation() || l.isContentWhiteSpace() {
+	// for l.isPunctuation() || l.isDigit() || l.isLetter() || l.isPunctuation() || l.isContentWhiteSpace() {
+	// 	l.readChar()
+	// }
+	for l.isToken() == false && l.ch != 0 && l.ch != '\n' {
 		l.readChar()
 	}
 	// for l.IsToken(l.runes[l.position]) == false {
