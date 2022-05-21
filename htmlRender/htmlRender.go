@@ -129,35 +129,35 @@ func (h *HtmlRender) render_token() (string, error) {
 	case markdownLexer.RIGHT_BRACKET:
 		return h.current_token.Literal, nil
 	case markdownLexer.HORIZONTAL_RULE:
-		return "<hr>", nil
+		return "<hr>", nil //TODO
 	case markdownLexer.CHECKED:
 		return "<input type=\"checkbox\" checked>", nil
 	case markdownLexer.UNCHECKED:
 		return "<input type=\"checkbox\" >", nil
 	case markdownLexer.HEADER_ONE:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.HEADER_TWO:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.HEADER_THREE:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.ITALIC:
 		return h.render_italic_token()
 	case markdownLexer.BOLD:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.BOLD_ITALIC:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.QUOTE:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.INLINE_CODE:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.CODE_BLOCK:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.BULLET_MINUS:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.BULLET_PLUS:
-		return "", nil
+		return "", nil // TODO
 	case markdownLexer.LEFT_BRACKET:
-		return "", nil
+		return "", nil // TODO
 	default:
 		return "", errors.New("Issue rendering HTML")
 	}
