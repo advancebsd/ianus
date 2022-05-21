@@ -256,8 +256,6 @@ func (h *HtmlRender) renderMdTokenToHtml(t markdownLexer.Token) string {
 		str = " "
 	case markdownLexer.CONTENT:
 		str = t.Literal
-	case markdownLexer.EOF:
-		str = ""
 	case markdownLexer.BOLD:
 		str = h.handleEmphasis()
 	case markdownLexer.ITALIC:
