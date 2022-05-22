@@ -11,7 +11,6 @@ func TestH1Rendering(t *testing.T) {
 	var l markdownLexer.Lexer
 	var token markdownLexer.Token
 	var tokens []markdownLexer.Token
-	var h HtmlRender
 	var result string
 	var expected string
 	var err error
@@ -23,7 +22,7 @@ func TestH1Rendering(t *testing.T) {
 		tokens = append(tokens, token)
 		token = l.NextToken()
 	}
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err = h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document")
@@ -39,7 +38,6 @@ func TestH2Rendering(t *testing.T) {
 	var l markdownLexer.Lexer
 	var token markdownLexer.Token
 	var tokens []markdownLexer.Token
-	var h HtmlRender
 	var result string
 	var expected string
 	var err error
@@ -51,7 +49,7 @@ func TestH2Rendering(t *testing.T) {
 		tokens = append(tokens, token)
 		token = l.NextToken()
 	}
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err = h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document")
@@ -67,7 +65,6 @@ func TestH3Rendering(t *testing.T) {
 	var l markdownLexer.Lexer
 	var token markdownLexer.Token
 	var tokens []markdownLexer.Token
-	var h HtmlRender
 	var result string
 	var expected string
 	var err error
@@ -79,7 +76,7 @@ func TestH3Rendering(t *testing.T) {
 		tokens = append(tokens, token)
 		token = l.NextToken()
 	}
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err = h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document")
@@ -99,8 +96,7 @@ func TestBoldEmphasis(t *testing.T) {
 		tokens = append(tokens, token)
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document for bold case")
@@ -120,8 +116,7 @@ func TestItalicEmphasis(t *testing.T) {
 		tokens = append(tokens, token)
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document for italic case")
@@ -141,8 +136,7 @@ func TestBoldItalicEmphasis(t *testing.T) {
 		tokens = append(tokens, token)
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document for bold italic case")
@@ -162,8 +156,7 @@ func TestBoldAndItalicSeperate(t *testing.T) {
 		tokens = append(tokens, token)
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document for bold italic case")
@@ -183,8 +176,7 @@ func TestInLineCode(t *testing.T) {
 		tokens = append(tokens, token)
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document for in_line code case")
@@ -204,8 +196,7 @@ func TestCodeBlock(t *testing.T) {
 		tokens = append(tokens, token)
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document for bold case")
@@ -225,8 +216,7 @@ func TestQuote(t *testing.T) {
 		tokens = append(tokens, token)
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document for bold case")
@@ -246,8 +236,7 @@ func TestQuote2(t *testing.T) {
 		tokens = append(tokens, token)
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document for bold case")
@@ -267,8 +256,7 @@ func TestUnorderedList(t *testing.T) {
 		tokens = append(tokens, token)
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document for bold case")
@@ -287,8 +275,7 @@ func TestLink(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue render document for link")
@@ -313,8 +300,7 @@ func TestCheckBoxChecked(t *testing.T) {
 		}
 	}
 	fmt.Println(tokens)
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document with checked checkbox")
@@ -338,8 +324,7 @@ func TestUnCheckBoxChecked(t *testing.T) {
 			break
 		}
 	}
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering document with checked checkbox")
@@ -363,8 +348,7 @@ func TestHorizontalLineRule(t *testing.T) {
 			break
 		}
 	}
-	var h HtmlRender
-	h.InitializeHtmlRender(tokens)
+	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue rendering tokens for horizonatal rule test")
@@ -386,8 +370,7 @@ func TestSemicolon(t *testing.T) {
 		tokens = append(tokens, token)
 		token = l.NextToken()
 	}
-	var g HtmlRender
-	g.InitializeHtmlRender(tokens)
+	g := InitializeHtmlRender(tokens)
 	result, err := g.RenderDocument()
 	if err != nil {
 		t.Errorf("Issue with rendering document from test string")
