@@ -3,7 +3,6 @@ package htmlRender
 import (
   "errors"
   markdownLexer "github.com/advancebsd/ianus/markdownLexer"
-  "os"
 )
 
 type HtmlRender struct {
@@ -34,6 +33,9 @@ func (h *HtmlRender) RenderDocument() (string, error) {
 			return "", err
 		}
 		h.page += str
+		if h.is_next_eof() {
+			break
+		}
 		h.increment_token()
 	}
 	return h.page, nil
@@ -225,14 +227,16 @@ func (h *HtmlRender) render_italic_token() (string, error) {
 				return "", err
 			}
 			str += start_tag
-			h.increment_token();
-			for h.current_token.Type != markdownLexer.NEW_LINE || h.current_token.Type != markdownLexer.EOF {
-				render, error := h.render_token()
-				if error != nil {
-					return "", errors.New("Could not render token")
+			for {
+				if h.is_next_newline_or_eof() {
+					break
 				}
-				str += render
 				h.increment_token()
+				literal, err := h.render_token()
+				if err != nil {
+					return "", errors.New("Issue rendering bullet point")
+				}
+				str += literal
 			}
 			str += end_tag
 			return str, nil
@@ -437,6 +441,16 @@ func (h *HtmlRender) render_headers() (string, error) {
 		str += end_tag
 		return str, nil
 	}
+	next_token, err := h.peek_next_token()
+	if err != nil {
+		return "", err
+	}
+	if next_token.Type != markdownLexer.WHITESPACE {
+		return h.current_token.Literal, nil
+	}
+	// skip the white space
+	h.increment_token()
+	// not get to the start of the header
 	h.increment_token()
 	for {
 		literal, err := h.render_token()
