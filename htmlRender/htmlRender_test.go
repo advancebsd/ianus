@@ -141,7 +141,7 @@ func TestBoldItalicEmphasis(t *testing.T) {
 	if err != nil {
 		t.Errorf("Issue rendering document for bold italic case")
 	}
-	expected := "<b><i>helloworld</b></i>"
+	expected := "<b><i>helloworld</i></b>"
 	if result != expected {
 		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
 	}
