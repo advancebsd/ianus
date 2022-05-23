@@ -326,6 +326,15 @@ func (h *HtmlRender) render_quote() (string, error) {
 		str += end_tag
 		return str, nil
 	}
+	// look at the next token
+	next_token, err := h.peek_next_token()
+	if err != nil {
+		return "", err
+	}
+	// if the next token is white space, we want to just consume that
+	if next_token.Type == markdownLexer.WHITESPACE {
+		h.increment_token()
+	}
 	h.increment_token()
 	for {
 		literal, err := h.render_token()
@@ -410,9 +419,21 @@ func (h *HtmlRender) render_bullet_points() (string, error) {
 		return "", errors.New("Could not identify the proper tag for bullet points")
 	}
 	str += start_tag
-	if h.is_next_newline_or_eof() {
+// 	if h.is_next_newline_or_eof() {
+// 		str += end_tag
+// 		return str, nil
+// 	}
+	next_token, err := h.peek_next_token()
+	if err != nil {
+		return "", err
+	}
+	if next_token.Type == markdownLexer.EOF || next_token.Type == markdownLexer.NEW_LINE {
 		str += end_tag
 		return str, nil
+	}
+	// if next token is a white space, consume it
+	if next_token.Type == markdownLexer.WHITESPACE {
+		h.increment_token()
 	}
 	h.increment_token()
 	for {
@@ -421,7 +442,7 @@ func (h *HtmlRender) render_bullet_points() (string, error) {
 			return "", errors.New("Issue render token in a bullet point")
 		}
 		str += literal
-		if h.is_next_eof() {
+		if h.is_next_newline_or_eof() {
 			break
 		}
 		h.increment_token()
