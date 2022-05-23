@@ -223,7 +223,7 @@ func TestQuote(t *testing.T) {
 	}
 	expected := "<blockquote>This is a quote</blockquote>\n"
 	if result != expected {
-		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
+		t.Errorf("Block quote rendering.\nExpected: %s\nResult: %s\n", expected, result)
 	}
 }
 
