@@ -1,9 +1,11 @@
 package htmlRender
 
 import (
+	// "fmt"
 	"fmt"
-	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 	"testing"
+
+	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 )
 
 func TestH1Rendering(t *testing.T) {
@@ -95,7 +97,6 @@ func TestBoldEmphasis(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
@@ -115,7 +116,6 @@ func TestItalicEmphasis(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
@@ -135,7 +135,6 @@ func TestBoldItalicEmphasis(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
@@ -155,7 +154,6 @@ func TestBoldAndItalicSeperate(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
@@ -175,7 +173,6 @@ func TestInLineCode(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
@@ -195,7 +192,6 @@ func TestCodeBlock(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
@@ -215,7 +211,6 @@ func TestQuote(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
@@ -235,7 +230,6 @@ func TestQuote2(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
@@ -255,7 +249,6 @@ func TestUnorderedList(t *testing.T) {
 	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
 		tokens = append(tokens, token)
 	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
@@ -282,7 +275,7 @@ func TestLink(t *testing.T) {
 	}
 	expected := "<a href=\"http://netbsd.org\">NetBSD</a>"
 	if result != expected {
-		t.Errorf("Did not properly render link")
+		t.Errorf("Did not properly render link\n\tExpected: %s\n\tActual: %s", expected, result)
 	}
 }
 
@@ -298,8 +291,6 @@ func TestCheckBoxChecked(t *testing.T) {
 		if token.Type == markdownLexer.EOF {
 			break
 		}
-	}
-	fmt.Println(tokens)
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
