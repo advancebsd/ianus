@@ -2,7 +2,7 @@ package htmlRender
 
 import (
 	// "fmt"
-	"fmt"
+
 	"testing"
 
 	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
@@ -291,6 +291,7 @@ func TestCheckBoxChecked(t *testing.T) {
 		if token.Type == markdownLexer.EOF {
 			break
 		}
+	}
 	h := InitializeHtmlRender(tokens)
 	result, err := h.RenderDocument()
 	if err != nil {
