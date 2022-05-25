@@ -95,7 +95,6 @@ func (h *HtmlRender) peek_to_newline_or_token() (markdownLexer.Token, error) {
 		position++
 		token = h.token_stream[position]
 	}
-	return markdownLexer.Token{Type: markdownLexer.INVALID}, errors.New("Could not peek ahead")
 }
 
 // looks at the next token and returns whether or not is a newline token or an EOF token
