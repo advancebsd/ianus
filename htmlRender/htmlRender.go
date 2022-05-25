@@ -1,16 +1,17 @@
 package htmlRender
 
 import (
-  "errors"
-  markdownLexer "github.com/advancebsd/ianus/markdownLexer"
+	"errors"
+
+	markdownLexer "github.com/advancebsd/ianus/markdownLexer"
 )
 
 type HtmlRender struct {
-	token_stream []markdownLexer.Token
-	idx int
-	length int
+	token_stream  []markdownLexer.Token
+	idx           int
+	length        int
 	current_token markdownLexer.Token
-	page string
+	page          string
 }
 
 // initializ a HTML render
@@ -42,7 +43,7 @@ func (h *HtmlRender) RenderDocument() (string, error) {
 }
 
 // get the token at a given index
-func (h *HtmlRender) get_token_by_index(i int) (markdownLexer.Token) {
+func (h *HtmlRender) get_token_by_index(i int) markdownLexer.Token {
 	return h.token_stream[i]
 }
 
@@ -61,7 +62,7 @@ func (h *HtmlRender) peek_prev_token() (markdownLexer.Token, error) {
 	if h.idx > 0 {
 		return h.token_stream[h.idx-1], nil
 	}
-	return markdownLexer.Token{ Type: markdownLexer.INVALID }, errors.New("Can not index an array less than 0")
+	return markdownLexer.Token{Type: markdownLexer.INVALID}, errors.New("Can not index an array less than 0")
 }
 
 // look at the token that comes after the current token
@@ -69,7 +70,7 @@ func (h *HtmlRender) peek_next_token() (markdownLexer.Token, error) {
 	if h.idx < h.length-1 {
 		return h.token_stream[h.idx+1], nil
 	}
-	return markdownLexer.Token{ Type: markdownLexer.INVALID }, errors.New("Can not look at tokens that don't exist beyond bounds")
+	return markdownLexer.Token{Type: markdownLexer.INVALID}, errors.New("Can not look at tokens that don't exist beyond bounds")
 }
 
 // Looks ahead and search ig a token similar to the current or a newline or
@@ -77,7 +78,7 @@ func (h *HtmlRender) peek_next_token() (markdownLexer.Token, error) {
 // returns the token
 func (h *HtmlRender) peek_to_newline_or_token() (markdownLexer.Token, error) {
 	if h.idx >= h.length-1 {
-		return markdownLexer.Token{ Type: markdownLexer.INVALID }, errors.New("Can not peek beyond array bounds")
+		return markdownLexer.Token{Type: markdownLexer.INVALID}, errors.New("Can not peek beyond array bounds")
 	}
 	position := h.idx + 1
 	token := h.token_stream[position]
@@ -94,7 +95,7 @@ func (h *HtmlRender) peek_to_newline_or_token() (markdownLexer.Token, error) {
 		position++
 		token = h.token_stream[position]
 	}
-	return markdownLexer.Token{ Type: markdownLexer.INVALID }, errors.New("Could not peek ahead")
+	return markdownLexer.Token{Type: markdownLexer.INVALID}, errors.New("Could not peek ahead")
 }
 
 // looks at the next token and returns whether or not is a newline token or an EOF token
@@ -128,6 +129,49 @@ func (h *HtmlRender) render_link(link string, desc string) string {
 	return "<a href=\"" + link + "\">" + desc + "</a>"
 }
 
+func (h *HtmlRender) render_to_end_of_line() string {
+	str := ""
+	for {
+		if h.current_token.Type == markdownLexer.NEW_LINE {
+			return str
+		}
+		if h.current_token.Type == markdownLexer.EOF {
+			return str
+		}
+		literal, err := h.render_token()
+		if err != nil {
+			continue
+		}
+		str += literal
+		next_token, err := h.peek_next_token()
+		if err != nil {
+			continue
+		}
+		if next_token.Type == markdownLexer.NEW_LINE {
+			break
+		}
+	}
+	return str
+}
+
+func (h *HtmlRender) check_if_asterick_bullet() bool {
+	prev_token, err := h.peek_next_token()
+	if err != nil {
+		// do nothing
+	}
+	if prev_token.Type != markdownLexer.NEW_LINE {
+		return false
+	}
+	next_token, err := h.peek_next_token()
+	if err != nil {
+		return false
+	}
+	if next_token.Type != markdownLexer.WHITESPACE {
+		return false
+	}
+	return true
+}
+
 func (h *HtmlRender) get_tags(token markdownLexer.Token) (string, string, error) {
 	switch token.Type {
 	case markdownLexer.HEADER_ONE:
@@ -149,9 +193,9 @@ func (h *HtmlRender) get_tags(token markdownLexer.Token) (string, string, error)
 	case markdownLexer.BOLD_ITALIC:
 		return "<b><i>", "</i></b>", nil
 	case markdownLexer.BULLET_MINUS:
-		return "<li>", "</li>", nil
+		return "<ul>", "</ul>", nil
 	case markdownLexer.BULLET_PLUS:
-		return "<li>", "</li>", nil
+		return "<ul>", "</ul>", nil
 	default:
 		return "", "", errors.New("Could not match appropraite tag")
 	}
@@ -207,112 +251,78 @@ func (h *HtmlRender) render_token() (string, error) {
 }
 
 func (h *HtmlRender) render_italic_token() (string, error) {
-	str := ""
-	// Reference previous and next token to see it italic token is at the end of the line
-	prev_token, err := h.peek_prev_token()
-	if err != nil {
-		return str, err
-	}
-	if prev_token.Type == markdownLexer.NEW_LINE {
+	if h.check_if_asterick_bullet() {
+		start_tag, end_tag, err := h.get_tags(markdownLexer.Token{
+			Type: markdownLexer.NEW_LINE,
+		})
+		if err != nil {
+			return "", err
+		}
+		str := ""
+		str += start_tag
 		next_token, err := h.peek_next_token()
 		if err != nil {
+			str += end_tag
 			return str, err
 		}
-		if next_token.Type == markdownLexer.WHITESPACE {
-			// Since previous token is newline and next token is a white space
-			// make the assumption that the asterick is actually meant to be
-			// a bullt point
-			start_tag, end_tag, err := h.get_tags(h.current_token)
-			if err != nil {
-				return "", err
-			}
-			str += start_tag
-			for {
-				if h.is_next_newline_or_eof() {
-					break
-				}
-				h.increment_token()
-				literal, err := h.render_token()
-				if err != nil {
-					return "", errors.New("Issue rendering bullet point")
-				}
-				str += literal
-			}
+		if next_token.Type == markdownLexer.NEW_LINE || next_token.Type == markdownLexer.EOF {
 			str += end_tag
 			return str, nil
 		}
-		// Not facing a situation where a asterick is supposed to be a bullet point
-		// look ahead an see which tokens are encountered first between
-		// italic tokens, newline tokens, or end of file tokens
-		token, err := h.peek_to_newline_or_token()
-		if err != nil {
-			return "", errors.New("Issue looking ahead when rendering italic token")
-		}
-		// if look ahead and see new line or EOF instead of ending italic token
-		// render the asterick as is in place
-		if token.Type == markdownLexer.NEW_LINE || token.Type == markdownLexer.EOF {
-			return h.current_token.Literal, nil
-		}
-		// look ahead showed that next token we care about is italics token
-		// render all content between the two astericks and surrounf them with html
-		// italic tags
-		if token.Type == markdownLexer.ITALIC {
-			start_tag, end_tag, err := h.get_tags(h.current_token)
-			if err != nil {
-				return "", err
-			}
-			str += start_tag
+		for {
 			h.increment_token()
-			for {
-				if h.current_token.Type == markdownLexer.ITALIC {
-					str += end_tag
-					return str, nil
-				}
-				render, err := h.render_token()
-				if err != nil {
-					return "", errors.New("Issue rendering tokens after italic start")
-				}
-				str += render
-				h.increment_token()
+			literal, err := h.render_token()
+			if err != nil {
+				return "", nil
+			}
+			str += literal
+			next_token, err := h.peek_next_token()
+			if err != nil {
+				return "", nil
+			}
+			if next_token.Type == markdownLexer.NEW_LINE || next_token.Type == markdownLexer.EOF {
+				break
 			}
 		}
+		str += end_tag
+		return str, nil
 	}
-
-	// This is the case where the previous token is not a new line token
-	// so the assumption can be made that the token is not meant to be a bullet point
-	// look ahead to see if the token stream will lead to a italic token, new line token
-	// or end of file token next
-	token, err := h.peek_to_newline_or_token()
+	// render italic
+	str := ""
+	start_tag, end_tag, err := h.get_tags((h.current_token))
 	if err != nil {
-		return "", err
-	}
-	// significant tokens to come up are the newline or end of file token
-	// so just render the asterick as is in place
-	if token.Type == markdownLexer.NEW_LINE || token.Type == markdownLexer.EOF {
-		return h.current_token.Literal, nil
-	}
-
-	// next significant token is an italics
-	// so render as expected for an italics tag
-	start_tag, end_tag, err := h.get_tags(h.current_token)
-	if err != nil {
-		return str, errors.New("Issue getting tags for rendering")
+		return "", errors.New("Issue getting appropraite tags for italics")
 	}
 	str += start_tag
-	h.increment_token()
-	for {
-		if h.current_token.Type == markdownLexer.ITALIC {
-			str += end_tag
-			return str, nil
-		}
-		render, err := h.render_token()
-		if err != nil {
-			return "", errors.New("Issue rendering tokens in between italics")
-		}
-		str += render
-		h.increment_token()
+	next_token, err := h.peek_next_token()
+	if err != nil {
+		str += end_tag
+		return str, errors.New("Issue peeking ahead of next token in italics")
 	}
-	return "", errors.New("Issue rendering italic tokens")
+	if next_token.Type == markdownLexer.EOF || next_token.Type == markdownLexer.NEW_LINE {
+		str += end_tag
+		return str, nil
+	}
+	for {
+		h.increment_token()
+		if h.current_token.Type == markdownLexer.ITALIC {
+			break
+		}
+		literal, err := h.render_token()
+		if err != nil {
+			return "", err
+		}
+		str += literal
+		next_token, err := h.peek_next_token()
+		if err != nil {
+			return "", err
+		}
+		if next_token.Type == markdownLexer.EOF || next_token.Type == markdownLexer.NEW_LINE {
+			break
+		}
+	}
+	str += end_tag
+	return str, nil
 }
 
 func (h *HtmlRender) render_quote() (string, error) {
@@ -419,10 +429,10 @@ func (h *HtmlRender) render_bullet_points() (string, error) {
 		return "", errors.New("Could not identify the proper tag for bullet points")
 	}
 	str += start_tag
-// 	if h.is_next_newline_or_eof() {
-// 		str += end_tag
-// 		return str, nil
-// 	}
+	// 	if h.is_next_newline_or_eof() {
+	// 		str += end_tag
+	// 		return str, nil
+	// 	}
 	next_token, err := h.peek_next_token()
 	if err != nil {
 		return "", err
@@ -548,72 +558,46 @@ func (h *HtmlRender) render_bold_italic_text() (string, error) {
 	return str, nil
 }
 
-func (h *HtmlRender) render_left_bracket() (string, error) {
-	// need to keep this just in case
-	left_bracket := "["
-	// between brackets
-	content := ""
-	// get content after right left bracket '[' and place in a temporary string
-	// called content. This could be literal content or a part of a markdown link
-	for {
-		// check if next token is new line or eof
-		if h.is_next_newline_or_eof() {
-			// if so, just return the literal of the bracket and the content read so far
-			return left_bracket + content, nil
-		}
-		// check if current token is right bracket
-		if h.current_token.Type == markdownLexer.RIGHT_BRACKET {
-			break
-		}
-		// increment the token
-		h.increment_token()
-		// render token
+func (h *HtmlRender) render_between(t markdownLexer.TokenType) (string, error) {
+	h.increment_token()
+	str := ""
+	for h.current_token.Type != t {
 		literal, err := h.render_token()
 		if err != nil {
-			return "", errors.New("Issue getting content after left bracket")
+			return "", err
 		}
-		// add to the content for what comes after the left bracket
-		content += literal
+		str += literal
+		if h.is_next_newline_or_eof() {
+			return str, errors.New("No matching ending token")
+		}
+		h.increment_token()
 	}
-	// current token is a right bracket at this point
-	// save this just in case this is not a link
-	right_bracket := "]"
-	// if there is a new line or eof next, render what we have in brackets
-	if h.is_next_newline_or_eof()  {
-		return left_bracket + content + right_bracket, nil
+	return str, nil
+}
+
+func (h *HtmlRender) render_left_bracket() (string, error) {
+	if h.is_next_newline_or_eof() {
+		return "[", nil
+	}
+	between_brackets, err := h.render_between(markdownLexer.RIGHT_BRACKET)
+	if err != nil {
+		return "[" + between_brackets, nil
 	}
 	next_token, err := h.peek_next_token()
 	if err != nil {
 		return "", err
 	}
 	if next_token.Type != markdownLexer.LEFT_PAREN {
-		return left_bracket + content + right_bracket, nil
+		return "[" + between_brackets + "]", nil
 	}
-	link := ""
-	left_paren := "("
-	// established that the next token can only be left parenthesis
+	if next_token.Type == markdownLexer.NEW_LINE || next_token.Type == markdownLexer.EOF {
+		return "[" + between_brackets + "]", nil
+	}
 	h.increment_token()
-	// skip over that right parenthesis token
-	for {
-		// check if next token is eof or newline
-		if h.is_next_newline_or_eof() {
-			// return the literals of what we have so far
-			return left_bracket + content + right_bracket + left_paren, nil
-		}
-		h.increment_token()
-		// check for exit condition of right parenthsus
-		if h.current_token.Type == markdownLexer.RIGHT_PAREN {
-			// break since exit condition is met
-			break
-		}
-		// get content inside of parenthesis
-		literal, err := h.render_token()
-		if err != nil {
-			return "", errors.New("Issue trying to render possible link")
-		}
-		link += literal
+	between_parens, err := h.render_between(markdownLexer.RIGHT_PAREN)
+	if err != nil {
+		return "[" + between_brackets + "]" + "(" + between_parens, nil
 	}
-	// link present in link
-	// hit right parenthsis token
-	return h.render_link(link, content), nil
+	return h.render_link(between_parens, between_brackets), nil
+
 }
