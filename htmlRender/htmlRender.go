@@ -154,7 +154,7 @@ func (h *HtmlRender) render_to_end_of_line() string {
 }
 
 func (h *HtmlRender) check_if_asterick_bullet() bool {
-	prev_token, err := h.peek_next_token()
+	prev_token, err := h.peek_prev_token()
 	if err != nil {
 		// do nothing
 	}
