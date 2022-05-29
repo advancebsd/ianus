@@ -422,6 +422,9 @@ func (h *HtmlRender) render_code_block() (string, error) {
 }
 
 func (h *HtmlRender) render_bullet_points() (string, error) {
+	if h.check_if_asterick_bullet() == false {
+		return h.current_token.Literal, nil
+	}
 	str := ""
 	start_tag, end_tag, err := h.get_tags(h.current_token)
 	if err != nil {
