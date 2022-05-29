@@ -242,7 +242,7 @@ func TestQuote2(t *testing.T) {
 }
 
 func TestUnorderedList(t *testing.T) {
-	str := "- This is an item\n"
+	str := "\n- This is an item\n"
 	var l markdownLexer.Lexer
 	l.InitializeLexer(str)
 	var tokens []markdownLexer.Token
@@ -254,7 +254,7 @@ func TestUnorderedList(t *testing.T) {
 	if err != nil {
 		t.Errorf("Issue rendering document for bold case")
 	}
-	expected := "<ul>This is an item</ul>\n"
+	expected := "\n<ul>This is an item</ul>\n"
 	if result != expected {
 		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
 	}
