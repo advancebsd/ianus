@@ -260,6 +260,25 @@ func TestUnorderedList(t *testing.T) {
 	}
 }
 
+func TestBulletAtBeginning(t *testing.T) {
+	str := "- This is an item\n"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var tokens []markdownLexer.Token
+	for token := l.NextToken(); token.Type != markdownLexer.EOF; token = l.NextToken() {
+		tokens = append(tokens, token)
+	}
+	h := InitializeHtmlRender(tokens)
+	result, err := h.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue rendering document for bold case")
+	}
+	expected := "<ul>This is an item</ul>\n"
+	if result != expected {
+		t.Errorf("Bold rendering.\nExpected: %s\nResult: %s\n", expected, result)
+	}
+}
+
 func TestLink(t *testing.T) {
 	str := "[NetBSD](http://netbsd.org)"
 	var l markdownLexer.Lexer
