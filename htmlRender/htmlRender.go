@@ -153,7 +153,21 @@ func (h *HtmlRender) render_to_end_of_line() string {
 	return str
 }
 
+func (h *HtmlRender) check_if_bullet_beginning_document() bool {
+	next_token, err := h.peek_next_token()
+	if err != nil {
+		return false
+	}
+	if next_token.Type != markdownLexer.WHITESPACE {
+		return false
+	}
+	return true
+}
+
 func (h *HtmlRender) check_if_asterick_bullet() bool {
+	if h.idx == 0 {
+		return h.check_if_bullet_beginning_document()
+	}
 	prev_token, err := h.peek_prev_token()
 	if err != nil {
 		// do nothing
