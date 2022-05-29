@@ -153,7 +153,7 @@ func (h *HtmlRender) render_to_end_of_line() string {
 	return str
 }
 
-func (h *HtmlRender) check_if_bullet_beginning_document() bool {
+func (h *HtmlRender) check_if_token_starts_document() bool {
 	next_token, err := h.peek_next_token()
 	if err != nil {
 		return false
@@ -164,9 +164,9 @@ func (h *HtmlRender) check_if_bullet_beginning_document() bool {
 	return true
 }
 
-func (h *HtmlRender) check_if_asterick_bullet() bool {
+func (h *HtmlRender) check_token_starts_line() bool {
 	if h.idx == 0 {
-		return h.check_if_bullet_beginning_document()
+		return h.check_if_token_starts_document()
 	}
 	prev_token, err := h.peek_prev_token()
 	if err != nil {
@@ -264,7 +264,7 @@ func (h *HtmlRender) render_token() (string, error) {
 }
 
 func (h *HtmlRender) render_italic_token() (string, error) {
-	if h.check_if_asterick_bullet() {
+	if h.check_token_starts_line() {
 		start_tag, end_tag, err := h.get_tags(markdownLexer.Token{
 			Type: markdownLexer.NEW_LINE,
 		})
@@ -339,6 +339,9 @@ func (h *HtmlRender) render_italic_token() (string, error) {
 }
 
 func (h *HtmlRender) render_quote() (string, error) {
+	if h.check_token_starts_line() == false {
+		return h.current_token.Literal, nil
+	}
 	var str = ""
 	start_tag, end_tag, err := h.get_tags(h.current_token)
 	if err != nil {
@@ -436,7 +439,7 @@ func (h *HtmlRender) render_code_block() (string, error) {
 }
 
 func (h *HtmlRender) render_bullet_points() (string, error) {
-	if h.check_if_asterick_bullet() == false {
+	if h.check_token_starts_line() == false {
 		return h.current_token.Literal, nil
 	}
 	str := ""
