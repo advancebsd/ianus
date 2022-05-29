@@ -429,3 +429,25 @@ func TestSemicolon(t *testing.T) {
 		t.Errorf("Expected and result do not match.\nExpected: %s\nResult: %s", expected, result)
 	}
 }
+
+func TestGreaterThanInTextNotQuote(t *testing.T) {
+	str := "That has a >99% chance"
+	var l markdownLexer.Lexer
+	l.InitializeLexer(str)
+	var token markdownLexer.Token
+	var tokens []markdownLexer.Token
+	token = l.NextToken()
+	for token.Type != markdownLexer.EOF {
+		tokens = append(tokens, token)
+		token = l.NextToken()
+	}
+	g := InitializeHtmlRender(tokens)
+	result, err := g.RenderDocument()
+	if err != nil {
+		t.Errorf("Issue with rendering document from test string")
+	}
+	expected := "That has a >99% chance"
+	if expected != result {
+		t.Errorf("Expected and result do not match.\nExpected: %s\nResult: %s", expected, result)
+	}
+}
